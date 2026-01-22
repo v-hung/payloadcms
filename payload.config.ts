@@ -6,38 +6,25 @@ import { buildConfig } from "payload";
 import { en } from "@payloadcms/translations/languages/en";
 import { vi } from "@payloadcms/translations/languages/vi";
 
+import localization from "./i18n/localization";
+
 import { Posts } from "./collections/post";
-import { payloadTranslations } from "./i18n/payload_translations";
 
 export default buildConfig({
-  // If you'd like to use Rich Text, pass your editor here
+  // Rich Text Editor
   editor: lexicalEditor(),
 
-  // Define and configure your collections in this array
+  // Collections
   collections: [Posts],
 
-  // i18n settings
+  // i18n - Admin UI language
   i18n: {
     fallbackLanguage: "vi",
     supportedLanguages: { vi, en },
-    translations: payloadTranslations,
   },
 
-  // localization settings
-  localization: {
-    defaultLocale: "vi",
-    fallback: true,
-    locales: [
-      {
-        code: "vi",
-        label: "Tiếng Việt",
-      },
-      {
-        code: "en",
-        label: "English",
-      },
-    ],
-  },
+  // Localization - Content multilingual support
+  localization,
 
   // Your Payload secret - should be a complex and secure string, unguessable
   secret: process.env.PAYLOAD_SECRET || "",

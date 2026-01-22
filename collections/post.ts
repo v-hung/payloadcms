@@ -1,8 +1,9 @@
-import { payloadTranslations } from "@/i18n/payload_translations";
 import type { CollectionConfig } from "payload";
 
-const t = payloadTranslations;
-
+/**
+ * Posts Collection Configuration
+ * Manages blog posts and articles with multilingual content support
+ */
 export const Posts: CollectionConfig = {
   slug: "posts",
 
@@ -11,34 +12,26 @@ export const Posts: CollectionConfig = {
     useAsTitle: "title",
     defaultColumns: ["title", "author", "status", "publishedAt", "updatedAt"],
     group: {
-      en: t.en.navigation.content,
-      vi: t.vi.navigation.content,
+      en: "Content",
+      vi: "Nội dung",
     },
   },
 
-  // Labels for the collection
+  // Collection labels
   labels: {
-    singular: {
-      en: t.en.collections.posts.singular,
-      vi: t.vi.collections.posts.singular,
-    },
-    plural: {
-      en: t.en.collections.posts.plural,
-      vi: t.vi.collections.posts.plural,
-    },
+    singular: { en: "Post", vi: "Bài viết" },
+    plural: { en: "Posts", vi: "Bài viết" },
   },
 
   // Fields definition
   fields: [
+    // Basic Information
     {
       name: "title",
       type: "text",
       required: true,
       localized: true,
-      label: {
-        en: t.en.collections.posts.labels.title,
-        vi: t.vi.collections.posts.labels.title,
-      },
+      label: { en: "Title", vi: "Tiêu đề" },
     },
     {
       name: "slug",
@@ -46,10 +39,7 @@ export const Posts: CollectionConfig = {
       required: true,
       unique: true,
       index: true,
-      label: {
-        en: t.en.collections.posts.labels.slug,
-        vi: t.vi.collections.posts.labels.slug,
-      },
+      label: { en: "Slug", vi: "Đường dẫn" },
       admin: {
         position: "sidebar",
       },
@@ -57,6 +47,7 @@ export const Posts: CollectionConfig = {
         beforeValidate: [
           ({ value, data }) => {
             if (!value && data?.title) {
+              // Auto-generate slug from title
               return data.title
                 .toLowerCase()
                 .replace(/[^\w\s-]/g, "")
@@ -69,48 +60,39 @@ export const Posts: CollectionConfig = {
         ],
       },
     },
+
+    // Content
     {
       name: "content",
       type: "richText",
       required: true,
       localized: true,
-      label: {
-        en: t.en.collections.posts.labels.content,
-        vi: t.vi.collections.posts.labels.content,
+      label: { en: "Content", vi: "Nội dung" },
+    },
+    {
+      name: "excerpt",
+      type: "textarea",
+      label: { en: "Excerpt", vi: "Trích đoạn" },
+      admin: {
+        description: {
+          en: "Short description for preview",
+          vi: "Mô tả ngắn để hiển thị preview",
+        },
       },
     },
+
+    // Publishing Settings
     {
       name: "status",
       type: "select",
       required: true,
       defaultValue: "draft",
       options: [
-        {
-          label: {
-            en: "Draft",
-            vi: "Bản nháp",
-          },
-          value: "draft",
-        },
-        {
-          label: {
-            en: "Published",
-            vi: "Đã xuất bản",
-          },
-          value: "published",
-        },
-        {
-          label: {
-            en: "Archived",
-            vi: "Đã lưu trữ",
-          },
-          value: "archived",
-        },
+        { label: { en: "Draft", vi: "Bản nháp" }, value: "draft" },
+        { label: { en: "Published", vi: "Đã xuất bản" }, value: "published" },
+        { label: { en: "Archived", vi: "Đã lưu trữ" }, value: "archived" },
       ],
-      label: {
-        en: t.en.collections.posts.labels.status,
-        vi: t.vi.collections.posts.labels.status,
-      },
+      label: { en: "Status", vi: "Trạng thái" },
       admin: {
         position: "sidebar",
       },
@@ -118,10 +100,7 @@ export const Posts: CollectionConfig = {
     {
       name: "publishedAt",
       type: "date",
-      label: {
-        en: t.en.collections.posts.labels.publishedAt,
-        vi: t.vi.collections.posts.labels.publishedAt,
-      },
+      label: { en: "Published Date", vi: "Ngày xuất bản" },
       admin: {
         position: "sidebar",
         date: {
@@ -134,24 +113,29 @@ export const Posts: CollectionConfig = {
       type: "relationship",
       relationTo: "users",
       required: true,
-      label: {
-        en: t.en.collections.posts.labels.author,
-        vi: t.vi.collections.posts.labels.author,
-      },
+      label: { en: "Author", vi: "Tác giả" },
       admin: {
         position: "sidebar",
       },
     },
 
+    // Featured Image (optional, add if needed)
+    // {
+    //   name: "featuredImage",
+    //   type: "upload",
+    //   relationTo: "media",
+    //   label: { en: "Featured Image", vi: "Ảnh đại diện" },
+    //   admin: {
+    //     position: "sidebar",
+    //   },
+    // },
+
+    // Taxonomy (commented out - add categories/tags collections first)
     // {
     //   name: "category",
     //   type: "relationship",
     //   relationTo: "categories",
-    //   hasMany: false,
-    //   label: {
-    //     en: t.en.collections.posts.labels.category,
-    //     vi: t.vi.collections.posts.labels.category,
-    //   },
+    //   label: { en: "Category", vi: "Danh mục" },
     //   admin: {
     //     position: "sidebar",
     //   },
@@ -161,10 +145,7 @@ export const Posts: CollectionConfig = {
     //   type: "relationship",
     //   relationTo: "tags",
     //   hasMany: true,
-    //   label: {
-    //     en: t.en.collections.posts.labels.tags,
-    //     vi: t.vi.collections.posts.labels.tags,
-    //   },
+    //   label: { en: "Tags", vi: "Thẻ" },
     //   admin: {
     //     position: "sidebar",
     //   },
