@@ -1,0 +1,86 @@
+{
+	"navigation": {
+		"dashboard": "Bảng điều khiển",
+		"settings": "Cài đặt",
+		"profile": "Hồ sơ",
+		"users": "Người dùng",
+		"content": "Nội dung"
+	},
+	"collections": {
+		"posts": {
+			"singular": "Bài viết",
+			"plural": "Bài viết",
+			"labels": {
+				"title": "Tiêu đề",
+				"content": "Nội dung",
+				"author": "Tác giả",
+				"publishedAt": "Ngày xuất bản",
+				"status": "Trạng thái",
+				"category": "Danh mục",
+				"tags": "Thẻ",
+				"featuredImage": "Ảnh đại diện",
+				"excerpt": "Trích đoạn",
+				"slug": "Đường dẫn"
+			}
+		},
+		"users": {
+			"singular": "Người dùng",
+			"plural": "Người dùng",
+			"labels": {
+				"name": "Tên",
+				"email": "Email",
+				"role": "Vai trò",
+				"password": "Mật khẩu",
+				"confirmPassword": "Xác nhận mật khẩu",
+				"avatar": "Ảnh đại diện",
+				"bio": "Tiểu sử",
+				"phone": "Số điện thoại",
+				"address": "Địa chỉ"
+			}
+		},
+		"categories": {
+			"singular": "Danh mục",
+			"plural": "Danh mục",
+			"labels": {
+				"name": "Tên",
+				"description": "Mô tả",
+				"slug": "Đường dẫn",
+				"parent": "Danh mục cha",
+				"order": "Thứ tự hiển thị"
+			}
+		},
+		"media": {
+			"singular": "Tệp tin",
+			"plural": "Thư viện tệp tin",
+			"labels": {
+				"filename": "Tên tệp",
+				"mimeType": "Loại tệp",
+				"filesize": "Kích thước",
+				"width": "Chiều rộng",
+				"height": "Chiều cao",
+				"alt": "Văn bản thay thế",
+				"caption": "Chú thích"
+			}
+		},
+		"pages": {
+			"singular": "Trang",
+			"plural": "Trang",
+			"labels": {
+				"title": "Tiêu đề",
+				"content": "Nội dung",
+				"slug": "Đường dẫn",
+				"template": "Mẫu",
+				"meta": "Thông tin Meta"
+			}
+		},
+		"tags": {
+			"singular": "Thẻ",
+			"plural": "Thẻ",
+			"labels": {
+				"name": "Tên",
+				"slug": "Đường dẫn",
+				"color": "Màu sắc"
+			}
+		}
+	}
+}

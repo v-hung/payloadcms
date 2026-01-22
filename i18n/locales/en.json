@@ -1,0 +1,86 @@
+{
+	"navigation": {
+		"dashboard": "Dashboard",
+		"settings": "Settings",
+		"profile": "Profile",
+		"users": "Users",
+		"content": "Content"
+	},
+	"collections": {
+		"posts": {
+			"singular": "Post",
+			"plural": "Posts",
+			"labels": {
+				"title": "Title",
+				"content": "Content",
+				"author": "Author",
+				"publishedAt": "Published Date",
+				"status": "Status",
+				"category": "Category",
+				"tags": "Tags",
+				"featuredImage": "Featured Image",
+				"excerpt": "Excerpt",
+				"slug": "Slug"
+			}
+		},
+		"users": {
+			"singular": "User",
+			"plural": "Users",
+			"labels": {
+				"name": "Name",
+				"email": "Email",
+				"role": "Role",
+				"password": "Password",
+				"confirmPassword": "Confirm Password",
+				"avatar": "Avatar",
+				"bio": "Biography",
+				"phone": "Phone",
+				"address": "Address"
+			}
+		},
+		"categories": {
+			"singular": "Category",
+			"plural": "Categories",
+			"labels": {
+				"name": "Name",
+				"description": "Description",
+				"slug": "Slug",
+				"parent": "Parent Category",
+				"order": "Display Order"
+			}
+		},
+		"media": {
+			"singular": "Media",
+			"plural": "Media Library",
+			"labels": {
+				"filename": "File Name",
+				"mimeType": "File Type",
+				"filesize": "File Size",
+				"width": "Width",
+				"height": "Height",
+				"alt": "Alt Text",
+				"caption": "Caption"
+			}
+		},
+		"pages": {
+			"singular": "Page",
+			"plural": "Pages",
+			"labels": {
+				"title": "Title",
+				"content": "Content",
+				"slug": "Slug",
+				"template": "Template",
+				"meta": "Meta Information"
+			}
+		},
+		"tags": {
+			"singular": "Tag",
+			"plural": "Tags",
+			"labels": {
+				"name": "Name",
+				"slug": "Slug",
+				"color": "Color"
+			}
+		}
+	}
+}

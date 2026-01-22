@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌐 COMPANY PRODUCT & MANUFACTURING CAPACITY WEBSITE
 
-## Getting Started
+## 1. Project Overview
 
-First, run the development server:
+This project aims to build a corporate website to promote products, showcase manufacturing capabilities, and introduce export markets of the company.  
+The website is designed with a modern, clean, and intelligent interface, ensuring an excellent user experience across all devices.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The website serves as:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- An official corporate communication channel
+- A platform to introduce products and factory capacity
+- A marketing and SEO-optimized tool for domestic and international markets
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 2. User Interface & Front-End Development
 
-## Learn More
+### 2.1 UI/UX Design
 
-To learn more about Next.js, take a look at the following resources:
+- Custom graphic design tailored to the client’s basic requirements
+- Modern, professional, and user-friendly layout
+- Brand-oriented colors, typography, and visuals
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2.2 Front-End Implementation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Conversion of design files into **HTML & CSS**
+- Clean, maintainable, and standards-compliant code
+- Cross-browser compatibility
 
-## Deploy on Vercel
+### 2.3 CMS Setup & Website Optimization
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- CMS installation and configuration
+- Setup of core management features
+- **SEO Optimization**, including:
+  - Meta title and description
+  - Heading structure (H1–H6)
+  - SEO-friendly URLs
+  - Page speed optimization
+  - On-page SEO best practices
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 3. Landing Pages & Website Structure
+
+### 🔹 Home Page
+
+- Company overview
+- Featured and best-selling products
+- Manufacturing capability highlights
+
+### 🔹 About Us Page
+
+- Company introduction
+- Vision
+- Mission
+- Core values
+
+### 🔹 Products Page
+
+- Main product categories
+- Best-selling products
+- Product listing and filtering
+
+### 🔹 Product Detail Page
+
+- Detailed product information
+- Product usage and benefits
+- Usage instructions
+- Related images and documents
+
+### 🔹 Contact Page
+
+- Company contact information
+- Customer inquiry form
+- Map integration (if required)
+
+---
+
+## 4. CMS & Back-End Features
+
+### 4.1 Media Library Management
+
+Administrators can:
+
+- Upload, edit, and delete images and videos
+- View and manage media lists
+- Filter media by categories or attributes
+- Manage different types of media assets
+
+### 4.2 Content Management
+
+- Create, edit, and delete articles/posts
+- Control display order of content on:
+  - Home page
+  - Landing pages
+- Search articles by keywords
+
+### 4.3 Search Function
+
+- Website-wide search functionality
+- Supports searching for products and articles
+
+---
+
+## 5. Mobile & Responsive Version
+
+- Fully responsive design
+- Optimized for:
+  - Mobile phones
+  - Tablets
+- Smooth and consistent experience across all screen sizes
+
+---
+
+## 6. Technology Stack (Customizable)
+
+- HTML5 / CSS3
+- JavaScript
+- CMS system (as per project requirements)
+- SEO On-page standards
+- Responsive Web Design
+
+---
+
+## 7. Project Objectives
+
+- Professionally present the company’s brand and capabilities
+- Enhance customer reach in domestic and international markets
+- Support marketing and export activities
+- Enable easy content management and future scalability
