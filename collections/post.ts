@@ -119,16 +119,73 @@ export const Posts: CollectionConfig = {
       },
     },
 
-    // Featured Image (optional, add if needed)
-    // {
-    //   name: "featuredImage",
-    //   type: "upload",
-    //   relationTo: "media",
-    //   label: { en: "Featured Image", vi: "Ảnh đại diện" },
-    //   admin: {
-    //     position: "sidebar",
-    //   },
-    // },
+    // Featured Settings
+    {
+      name: "featured",
+      type: "checkbox",
+      defaultValue: false,
+      label: { en: "Featured Post", vi: "Bài viết nổi bật" },
+      admin: {
+        position: "sidebar",
+        description: {
+          en: "Show on home page as featured post",
+          vi: "Hiển thị trên trang chủ dưới dạng bài viết nổi bật",
+        },
+      },
+    },
+    {
+      name: "displayOrder",
+      type: "number",
+      required: true,
+      defaultValue: 0,
+      label: { en: "Display Order", vi: "Thứ tự hiển thị" },
+      admin: {
+        position: "sidebar",
+        description: {
+          en: "Sort order for featured posts on home page (lower numbers appear first)",
+          vi: "Thứ tự sắp xếp cho bài viết nổi bật trên trang chủ (số nhỏ hơn hiển thị trước)",
+        },
+      },
+    },
+
+    // SEO Fields
+    {
+      name: "seoTitle",
+      type: "text",
+      localized: true,
+      label: { en: "SEO Title", vi: "Tiêu đề SEO" },
+      admin: {
+        position: "sidebar",
+        description: {
+          en: "Custom title for search engines (overrides post title)",
+          vi: "Tiêu đề tùy chỉnh cho công cụ tìm kiếm (ghi đè tiêu đề bài viết)",
+        },
+      },
+    },
+    {
+      name: "seoDescription",
+      type: "textarea",
+      localized: true,
+      label: { en: "SEO Description", vi: "Mô tả SEO" },
+      admin: {
+        position: "sidebar",
+        description: {
+          en: "Meta description for search engines",
+          vi: "Mô tả meta cho công cụ tìm kiếm",
+        },
+      },
+    },
+
+    // Featured Image
+    {
+      name: "featuredImage",
+      type: "upload",
+      relationTo: "media",
+      label: { en: "Featured Image", vi: "Ảnh đại diện" },
+      admin: {
+        position: "sidebar",
+      },
+    },
 
     // Taxonomy (commented out - add categories/tags collections first)
     // {

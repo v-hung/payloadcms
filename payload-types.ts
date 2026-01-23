@@ -68,6 +68,10 @@ export interface Config {
   blocks: {};
   collections: {
     posts: Post;
+    categories: Category;
+    products: Product;
+    'contact-inquiries': ContactInquiry;
+    media: Media;
     'payload-kv': PayloadKv;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
@@ -77,6 +81,10 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    'contact-inquiries': ContactInquiriesSelect<false> | ContactInquiriesSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -87,8 +95,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('vi' | 'en') | ('vi' | 'en')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'company-info': CompanyInfo;
+    manufacturing: Manufacturing;
+  };
+  globalsSelect: {
+    'company-info': CompanyInfoSelect<false> | CompanyInfoSelect<true>;
+    manufacturing: ManufacturingSelect<false> | ManufacturingSelect<true>;
+  };
   locale: 'vi' | 'en';
   user: User & {
     collection: 'users';
@@ -146,6 +160,23 @@ export interface Post {
   status: 'draft' | 'published' | 'archived';
   publishedAt?: string | null;
   author: number | User;
+  /**
+   * Show on home page as featured post
+   */
+  featured?: boolean | null;
+  /**
+   * Sort order for featured posts on home page (lower numbers appear first)
+   */
+  displayOrder: number;
+  /**
+   * Custom title for search engines (overrides post title)
+   */
+  seoTitle?: string | null;
+  /**
+   * Meta description for search engines
+   */
+  seoDescription?: string | null;
+  featuredImage?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -176,6 +207,233 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Describe the image for accessibility and SEO
+   */
+  alt: string;
+  /**
+   * Optional caption displayed with the image
+   */
+  caption?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    featured?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  /**
+   * Brief description of this category
+   */
+  description?: string | null;
+  /**
+   * Lower numbers appear first
+   */
+  displayOrder: number;
+  status: 'active' | 'inactive';
+  /**
+   * Custom title for search engines
+   */
+  seoTitle?: string | null;
+  /**
+   * Meta description for search engines
+   */
+  seoDescription?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  name: string;
+  slug: string;
+  /**
+   * Full product description with formatting
+   */
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Short summary for listings and previews
+   */
+  excerpt?: string | null;
+  /**
+   * Technical specifications and details
+   */
+  specifications?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Product benefits and advantages
+   */
+  benefits?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * How to use the product
+   */
+  usageInstructions?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Select one or more categories for this product
+   */
+  categories: (number | Category)[];
+  /**
+   * Product photos (multiple images supported)
+   */
+  images?: (number | Media)[] | null;
+  /**
+   * Show on home page as featured product
+   */
+  featured?: boolean | null;
+  /**
+   * Highlight as best-selling product
+   */
+  bestSeller?: boolean | null;
+  /**
+   * Sort order for featured products on home page (lower numbers appear first)
+   */
+  displayOrder: number;
+  status: 'draft' | 'published' | 'archived';
+  /**
+   * Custom title for search engines (overrides product name)
+   */
+  seoTitle?: string | null;
+  /**
+   * Meta description for search engines
+   */
+  seoDescription?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-inquiries".
+ */
+export interface ContactInquiry {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  /**
+   * Follow-up status (editable by admin)
+   */
+  status: 'new' | 'in-progress' | 'responded' | 'closed';
+  /**
+   * Internal notes about this inquiry (not visible to visitor)
+   */
+  notes?: string | null;
+  submittedAt: string;
+  /**
+   * Visitor IP for spam prevention
+   */
+  ipAddress?: string | null;
+  /**
+   * Browser information for analytics
+   */
+  userAgent?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -201,6 +459,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'posts';
         value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'contact-inquiries';
+        value: number | ContactInquiry;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
       } | null)
     | ({
         relationTo: 'users';
@@ -260,9 +534,123 @@ export interface PostsSelect<T extends boolean = true> {
   status?: T;
   publishedAt?: T;
   author?: T;
+  featured?: T;
+  displayOrder?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  featuredImage?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  displayOrder?: T;
+  status?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  excerpt?: T;
+  specifications?: T;
+  benefits?: T;
+  usageInstructions?: T;
+  categories?: T;
+  images?: T;
+  featured?: T;
+  bestSeller?: T;
+  displayOrder?: T;
+  status?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-inquiries_select".
+ */
+export interface ContactInquiriesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  message?: T;
+  status?: T;
+  notes?: T;
+  submittedAt?: T;
+  ipAddress?: T;
+  userAgent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  caption?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        featured?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -325,6 +713,257 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "company-info".
+ */
+export interface CompanyInfo {
+  id: number;
+  /**
+   * Official company name
+   */
+  companyName: string;
+  /**
+   * Company tagline or slogan
+   */
+  tagline?: string | null;
+  /**
+   * Company logo image (SVG or PNG recommended)
+   */
+  logo: number | Media;
+  /**
+   * Brief company overview for home page
+   */
+  overview: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Company vision statement
+   */
+  vision: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Company mission statement
+   */
+  mission: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Company core values
+   */
+  coreValues: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Physical company address
+   */
+  address: string;
+  /**
+   * Contact phone number
+   */
+  phone: string;
+  /**
+   * Contact email address
+   */
+  email: string;
+  /**
+   * Social media links (optional)
+   */
+  socialMedia?:
+    | {
+        platform: 'facebook' | 'linkedin' | 'youtube' | 'twitter';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "manufacturing".
+ */
+export interface Manufacturing {
+  id: number;
+  /**
+   * Section headline for manufacturing page
+   */
+  headline: string;
+  /**
+   * Overview of manufacturing capabilities
+   */
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Factory size (e.g., "50,000 sqm")
+   */
+  factorySize?: string | null;
+  /**
+   * Monthly or annual production capacity
+   */
+  productionCapacity?: string | null;
+  /**
+   * Typical order lead times
+   */
+  leadTimes?: string | null;
+  /**
+   * Quality certifications and standards
+   */
+  certifications?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Description of manufacturing processes
+   */
+  processes?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Factory photos and process documentation
+   */
+  images?: (number | Media)[] | null;
+  /**
+   * Custom title for search engines
+   */
+  seoTitle?: string | null;
+  /**
+   * Meta description for search engines
+   */
+  seoDescription?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "company-info_select".
+ */
+export interface CompanyInfoSelect<T extends boolean = true> {
+  companyName?: T;
+  tagline?: T;
+  logo?: T;
+  overview?: T;
+  vision?: T;
+  mission?: T;
+  coreValues?: T;
+  address?: T;
+  phone?: T;
+  email?: T;
+  socialMedia?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "manufacturing_select".
+ */
+export interface ManufacturingSelect<T extends boolean = true> {
+  headline?: T;
+  description?: T;
+  factorySize?: T;
+  productionCapacity?: T;
+  leadTimes?: T;
+  certifications?: T;
+  processes?: T;
+  images?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
