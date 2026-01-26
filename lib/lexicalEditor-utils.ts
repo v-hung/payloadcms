@@ -3,6 +3,7 @@ import {
   BlockquoteFeature,
   BoldFeature,
   ChecklistFeature,
+  defaultColors,
   HeadingFeature,
   HorizontalRuleFeature,
   IndentFeature,
@@ -16,6 +17,7 @@ import {
   StrikethroughFeature,
   SubscriptFeature,
   SuperscriptFeature,
+  TextStateFeature,
   UnderlineFeature,
   UnorderedListFeature,
   UploadFeature,
@@ -83,6 +85,48 @@ export const lexicalEditorConfig = lexicalEditor({
     // Relationships
     RelationshipFeature({
       enabledCollections: ["posts", "products"],
+    }),
+
+    // Custom Text States
+    TextStateFeature({
+      state: {
+        color: {
+          ...defaultColors.text,
+          // fancy gradients!
+          galaxy: {
+            label: "Galaxy",
+            css: {
+              background: "linear-gradient(to right, #0000ff, #ff0000)",
+              color: "white",
+            },
+          },
+          sunset: {
+            label: "Sunset",
+            css: { background: "linear-gradient(to top, #ff5f6d, #6a3093)" },
+          },
+        },
+        // You can have both colored and underlined text at the same time.
+        // If you don't want that, you should group them within the same key.
+        // (just like I did with defaultColors and my fancy gradients)
+        underline: {
+          solid: {
+            label: "Solid",
+            css: {
+              "text-decoration": "underline",
+              "text-underline-offset": "4px",
+            },
+          },
+          // You'll probably want to use the CSS light-dark() utility.
+          "yellow-dashed": {
+            label: "Yellow Dashed",
+            css: {
+              "text-decoration": "underline dashed",
+              "text-decoration-color": "light-dark(#EAB308,yellow)",
+              "text-underline-offset": "4px",
+            },
+          },
+        },
+      },
     }),
   ],
 });

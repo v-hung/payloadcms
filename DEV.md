@@ -21,6 +21,9 @@ pnpm dev
 # Chạy 2 lệnh này (theo thứ tự)
 npx payload generate:db-schema
 npx payload generate:types
+
+# Nếu sửa admin UI components
+npx payload generate:importmap
 ```
 
 ---
