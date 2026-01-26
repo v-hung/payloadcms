@@ -127,12 +127,12 @@
 
 ### Validation
 
-- [ ] T044 [US1] Test: Navigate to home page in both Vietnamese and English, verify company name, tagline, overview display correctly
-- [ ] T045 [US1] Test: Navigate to /about page, verify vision/mission/values display in both languages
-- [ ] T046 [US1] Test: Navigate to /contact page, verify company info displays and form validates all required fields
-- [ ] T047 [US1] Test: Submit contact form with valid data, verify success message and check Payload admin shows new inquiry
-- [ ] T048 [US1] Test: Submit contact form with invalid email, verify validation error appears
-- [ ] T049 [US1] Run Lighthouse audit on home/about/contact pages, verify accessibility score > 90
+- [x] T044 [US1] Test: Navigate to home page in both Vietnamese and English, verify company name, tagline, overview display correctly
+- [x] T045 [US1] Test: Navigate to /about page, verify vision/mission/values display in both languages
+- [x] T046 [US1] Test: Navigate to /contact page, verify company info displays and form validates all required fields
+- [x] T047 [US1] Test: Submit contact form with valid data, verify success message and check Payload admin shows new inquiry
+- [x] T048 [US1] Test: Submit contact form with invalid email, verify validation error appears
+- [x] T049 [US1] Run Lighthouse audit on home/about/contact pages, verify accessibility score > 90
 
 **Checkpoint**: At this point, User Story 1 is fully functional - visitors can learn about company and contact them. This is the MVP.
 
@@ -183,13 +183,13 @@
 
 ### Validation
 
-- [ ] T072 [US2] Test: Navigate to /products, verify all products display with thumbnails and category filters work
-- [ ] T073 [US2] Test: Click category filter, verify product list updates to show only products in that category
-- [ ] T074 [US2] Test: Click product card, verify detail page shows complete product information and images
-- [ ] T075 [US2] Test: Verify product detail page displays in both Vietnamese and English with proper translations
-- [ ] T076 [US2] Test: Verify featured products appear on home page
-- [ ] T077 [US2] Run Lighthouse audit on product pages, verify performance score > 85 desktop, > 75 mobile
-- [ ] T078 [US2] Verify all product images are optimized < 200KB (check Network tab in DevTools)
+- [x] T072 [US2] Test: Navigate to /products, verify all products display with thumbnails and category filters work
+- [x] T073 [US2] Test: Click category filter, verify product list updates to show only products in that category
+- [x] T074 [US2] Test: Click product card, verify detail page shows complete product information and images
+- [x] T075 [US2] Test: Verify product detail page displays in both Vietnamese and English with proper translations
+- [x] T076 [US2] Test: Verify featured products appear on home page
+- [x] T077 [US2] Run Lighthouse audit on product pages, verify performance score > 85 desktop, > 75 mobile
+- [x] T078 [US2] Verify all product images are optimized < 200KB (check Network tab in DevTools)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 are complete - full MVP with company info and product catalog functional.
 
@@ -219,10 +219,10 @@
 
 ### Validation
 
-- [ ] T089 [US3] Test: Navigate to /manufacturing page, verify all sections display correctly in both languages
-- [ ] T090 [US3] Test: Verify factory images display and are optimized < 200KB
-- [ ] T091 [US3] Test: Verify manufacturing highlight appears on home page with working link
-- [ ] T092 [US3] Run Lighthouse audit on manufacturing page, verify performance and SEO scores meet targets
+- [x] T089 [US3] Test: Navigate to /manufacturing page, verify all sections display correctly in both languages
+- [x] T090 [US3] Test: Verify factory images display and are optimized < 200KB
+- [x] T091 [US3] Test: Verify manufacturing highlight appears on home page with working link
+- [x] T092 [US3] Run Lighthouse audit on manufacturing page, verify performance and SEO scores meet targets
 
 **Checkpoint**: At this point, User Stories 1, 2, AND 3 are complete - company info, products, and manufacturing all functional.
 
@@ -262,11 +262,11 @@
 
 ### Validation
 
-- [ ] T107 [US4] Test: Login to Payload admin at /admin, create new post with title/content in both languages
-- [ ] T108 [US4] Test: Set post status to "published", verify it appears on /news page
-- [ ] T109 [US4] Test: Mark post as featured, verify it appears in home page featured section
-- [ ] T110 [US4] Test: Navigate to article detail page, verify content displays correctly in both languages
-- [ ] T111 [US4] Test: Upload images via Payload media library, verify they can be reused across posts
+- [x] T107 [US4] Test: Login to Payload admin at /admin, create new post with title/content in both languages
+- [x] T108 [US4] Test: Set post status to "published", verify it appears on /news page
+- [x] T109 [US4] Test: Mark post as featured, verify it appears in home page featured section
+- [x] T110 [US4] Test: Navigate to article detail page, verify content displays correctly in both languages
+- [x] T111 [US4] Test: Upload images via Payload media library, verify they can be reused across posts
 
 **Checkpoint**: At this point, User Stories 1-4 are complete - content management fully functional.
 
@@ -296,10 +296,10 @@
 
 ### Validation
 
-- [ ] T122 [US5] Test: Search for existing product name, verify it appears in results
-- [ ] T123 [US5] Test: Search for keyword in article content, verify matching articles appear
-- [ ] T124 [US5] Test: Search with no matching results, verify helpful message displays
-- [ ] T125 [US5] Test: Use category filters on products page, verify URL updates and results are correct
+- [x] T122 [US5] Test: Search for existing product name, verify it appears in results
+- [x] T123 [US5] Test: Search for keyword in article content, verify matching articles appear
+- [x] T124 [US5] Test: Search with no matching results, verify helpful message displays
+- [x] T125 [US5] Test: Use category filters on products page, verify URL updates and results are correct
 
 **Checkpoint**: At this point, User Stories 1-5 are complete - search and filtering enhance UX.
 
@@ -378,26 +378,26 @@
 
 ### Final Validation (Quickstart Checklist)
 
-- [ ] T154 Verify `pnpm install` runs without errors
-- [ ] T155 Verify `pnpm lint` passes with only known warning (eslint-disable in payload-generated-schema.ts)
-- [ ] T156 Verify `pnpm dev` starts server successfully on localhost:3000
-- [ ] T157 Verify Payload admin accessible at /admin with all collections visible
-- [ ] T158 Verify all pages accessible: /, /about, /products, /manufacturing, /news, /contact
-- [ ] T159 Verify language switching works on all pages
-- [ ] T160 Verify contact form submission creates inquiry in Payload admin
-- [ ] T161 Verify product category filtering works
-- [ ] T162 Verify featured products and articles display on home page
-- [ ] T163 Verify all images are optimized < 200KB (spot check in DevTools)
-- [ ] T164 Verify all pages have unique meta tags (View Page Source check)
-- [ ] T165 Verify responsive layouts work on mobile (test at 375px width)
-- [ ] T166 Verify all pages load within 3 seconds (test on standard broadband)
-- [ ] T167 Run final Lighthouse audits on all main pages, verify scores meet targets
+- [x] T154 Verify `pnpm install` runs without errors
+- [x] T155 Verify `pnpm lint` passes with only known warning (eslint-disable in payload-generated-schema.ts)
+- [x] T156 Verify `pnpm dev` starts server successfully on localhost:3000
+- [x] T157 Verify Payload admin accessible at /admin with all collections visible
+- [x] T158 Verify all pages accessible: /, /about, /products, /manufacturing, /news, /contact
+- [x] T159 Verify language switching works on all pages
+- [x] T160 Verify contact form submission creates inquiry in Payload admin
+- [x] T161 Verify product category filtering works
+- [x] T162 Verify featured products and articles display on home page
+- [x] T163 Verify all images are optimized < 200KB (spot check in DevTools)
+- [x] T164 Verify all pages have unique meta tags (View Page Source check)
+- [x] T165 Verify responsive layouts work on mobile (test at 375px width)
+- [x] T166 Verify all pages load within 3 seconds (test on standard broadband)
+- [x] T167 Run final Lighthouse audits on all main pages, verify scores meet targets
 
 ### Constitution Final Check
 
-- [ ] T168 Review all .tsx files and verify no implicit `any` types exist (TypeScript strict mode compliance)
-- [ ] T169 Verify all localized content fields in collections have `localized: true` set
-- [ ] T170 Verify all UI text is externalized to i18n/messages files (no hardcoded strings)
+- [x] T168 Review all .tsx files and verify no implicit `any` types exist (TypeScript strict mode compliance)
+- [x] T169 Verify all localized content fields in collections have `localized: true` set
+- [x] T170 Verify all UI text is externalized to i18n/messages files (no hardcoded strings)
 - [ ] T171 Verify Server Components used by default, Client Components only where interactivity needed
 - [ ] T172 Verify schema generation workflow documented in quickstart.md (already done)
 

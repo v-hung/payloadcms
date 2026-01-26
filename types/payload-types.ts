@@ -260,6 +260,9 @@ export interface Post {
   excerpt?: string | null;
   status: 'draft' | 'published' | 'archived';
   publishedAt?: string | null;
+  /**
+   * Defaults to current user
+   */
   author: number | Admin;
   /**
    * Show on home page as featured post
@@ -291,7 +294,7 @@ export interface Media {
   /**
    * Describe the image for accessibility and SEO
    */
-  alt: string;
+  alt?: string | null;
   /**
    * Optional caption displayed with the image
    */

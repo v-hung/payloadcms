@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import type { Metadata } from "next";
+import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 
 type LocaleType = "en" | "vi";
 
@@ -183,7 +184,9 @@ export default async function ProductDetailPage({
                 ) : (
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: JSON.stringify(product.description),
+                      __html: convertLexicalToHTML({
+                        data: product.description,
+                      }),
                     }}
                   />
                 )}
@@ -201,7 +204,9 @@ export default async function ProductDetailPage({
                 ) : (
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: JSON.stringify(product.specifications),
+                      __html: convertLexicalToHTML({
+                        data: product.specifications,
+                      }),
                     }}
                   />
                 )}
@@ -219,7 +224,7 @@ export default async function ProductDetailPage({
                 ) : (
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: JSON.stringify(product.benefits),
+                      __html: convertLexicalToHTML({ data: product.benefits }),
                     }}
                   />
                 )}
@@ -239,7 +244,9 @@ export default async function ProductDetailPage({
                 ) : (
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: JSON.stringify(product.usageInstructions),
+                      __html: convertLexicalToHTML({
+                        data: product.usageInstructions,
+                      }),
                     }}
                   />
                 )}

@@ -116,8 +116,13 @@ export const Posts: CollectionConfig = {
       relationTo: "admins",
       required: true,
       label: { en: "Author", vi: "Tác giả" },
+      defaultValue: ({ user }) => user?.id,
       admin: {
         position: "sidebar",
+        description: {
+          en: "Defaults to current user",
+          vi: "Mặc định là người dùng hiện tại",
+        },
       },
     },
 

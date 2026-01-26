@@ -1,7 +1,6 @@
 import sharp from "sharp";
 import path from "path";
 import { fileURLToPath } from "url";
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { buildConfig } from "payload";
 
@@ -23,10 +22,11 @@ import { Roles } from "./collections/roles";
 
 import { CompanyInfo } from "./globals/company-info";
 import { Manufacturing } from "./globals/manufacturing";
+import { lexicalEditorConfig } from "./lib/lexicalEditor-utils";
 
 export default buildConfig({
   // Rich Text Editor
-  editor: lexicalEditor(),
+  editor: lexicalEditorConfig,
 
   // Collections
   collections: [

@@ -63,7 +63,6 @@ export const Media: CollectionConfig = {
       name: "alt",
       type: "text",
       localized: true,
-      required: true,
       label: { en: "Alt Text", vi: "Văn bản thay thế" },
       admin: {
         description: {

@@ -5,7 +5,7 @@ import config from "@payload-config";
 import { ProductCard } from "@/components/product/product-card";
 import { PostCard } from "@/components/content/post-card";
 import type { Metadata } from "next";
-import type { Product, Post } from "@/payload-types";
+import { Post, Product } from "@/types/payload-types";
 
 type LocaleType = "en" | "vi";
 

@@ -42,7 +42,5 @@ yarn-error.log*
 next-env.d.ts
 
 # payload cms
-/data/
-*.db
-*.db-shm
-*.db-wal
+/database/*
+!database/sqlite.db

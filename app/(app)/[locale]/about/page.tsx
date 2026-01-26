@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { getCompanyInfo } from "@/services";
 import type { Metadata } from "next";
+import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 
 type LocaleType = "en" | "vi";
 
@@ -51,7 +52,7 @@ export default async function AboutPage({
               ) : (
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(companyInfo.vision),
+                    __html: convertLexicalToHTML({ data: companyInfo.vision }),
                   }}
                 />
               )}
@@ -71,7 +72,7 @@ export default async function AboutPage({
               ) : (
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(companyInfo.mission),
+                    __html: convertLexicalToHTML({ data: companyInfo.mission }),
                   }}
                 />
               )}
@@ -91,7 +92,9 @@ export default async function AboutPage({
               ) : (
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: JSON.stringify(companyInfo.coreValues),
+                    __html: convertLexicalToHTML({
+                      data: companyInfo.coreValues,
+                    }),
                   }}
                 />
               )}

@@ -1,6 +1,5 @@
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import Link from "next/link";
 import {
   getCompanyInfo,
   getProducts,
@@ -9,8 +8,9 @@ import {
 } from "@/services";
 import { ProductCard } from "@/components/product/product-card";
 import { PostCard } from "@/components/content/post-card";
-import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext";
+import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 import type { Metadata } from "next";
+import { Link } from "@/i18n/navigation";
 
 type LocaleType = "en" | "vi";
 
@@ -103,7 +103,7 @@ export default async function Home({
             ) : (
               <div
                 dangerouslySetInnerHTML={{
-                  __html: JSON.stringify(companyInfo.overview),
+                  __html: convertLexicalToHTML({ data: companyInfo.overview }),
                 }}
               />
             )}
@@ -138,7 +138,7 @@ export default async function Home({
           </>
         ) : (
           <p className="text-center text-muted-foreground">
-            No featured products available
+            {t("noFeaturedProductsAvailable")}
           </p>
         )}
       </section>
@@ -152,7 +152,7 @@ export default async function Home({
           {manufacturing.description && (
             <div className="max-w-3xl mx-auto text-center mb-6">
               <p className="text-lg text-muted-foreground line-clamp-3">
-                {convertLexicalToPlaintext({ data: manufacturing.description })}
+                {convertLexicalToHTML({ data: manufacturing.description })}
               </p>
             </div>
           )}
@@ -232,12 +232,12 @@ export default async function Home({
       {/* About Section */}
       <section className="text-center">
         <h2 className="text-3xl font-bold mb-4">{t("aboutSection")}</h2>
-        <a
+        <Link
           href="/about"
           className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
         >
           {t("learnMore")}
-        </a>
+        </Link>
       </section>
     </div>
   );

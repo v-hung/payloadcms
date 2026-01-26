@@ -13,7 +13,8 @@
 		"featuredArticles": "Latest News & Articles",
 		"viewAllArticles": "View All Articles",
 		"readMore": "Read More",
-		"publishedOn": "Published on"
+		"publishedOn": "Published on",
+		"noFeaturedProductsAvailable": "No featured products available"
 	},
 	"Navigation": {
 		"home": "Home",

@@ -1,40 +1,44 @@
 "use client";
 
+import { useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
-import { switchLocale, type LocaleType } from "@/lib/locale.utils";
+
+import { getLocales, switchLocale, type LocaleType } from "@/lib/locale.utils";
 
 export function useLanguageSwitcher() {
-  const currentLocale = useLocale();
+  const activeLocale = useLocale() as LocaleType;
   const pathname = usePathname();
   const router = useRouter();
 
+  // All supported locales (excluding current if bạn muốn)
+  const availableLocales = useMemo(
+    () => getLocales(activeLocale),
+    [activeLocale],
+  );
+
+  // Ensure current locale is always valid
+  const currentLocale = useMemo(() => {
+    return (
+      availableLocales.find((locale) => locale.code === activeLocale) ??
+      availableLocales[0]
+    );
+  }, [availableLocales, activeLocale]);
+
   /**
-   * Switch to a new locale
+   * Change language and navigate to new locale path
    */
-  const changeLocale = (newLocale: LocaleType) => {
-    const newPath = switchLocale(currentLocale, newLocale, pathname);
-    router.push(newPath);
+  const changeLanguage = (nextLocale: LocaleType) => {
+    if (nextLocale === currentLocale.code) return;
+
+    const nextPath = switchLocale(currentLocale.code, nextLocale, pathname);
+
+    router.push(nextPath);
   };
 
   return {
     currentLocale,
-    changeLocale,
+    availableLocales,
+    changeLanguage,
   };
 }
-
-/**
- * Usage example:
- *
- * function MyComponent() {
- *   const { currentLocale, changeLocale, toggleLocale } = useLanguageSwitcher();
- *
- *   return (
- *     <div>
- *       <p>Current: {currentLocale}</p>
- *       <button onClick={toggleLocale}>Toggle</button>
- *       <button onClick={() => changeLocale('en')}>EN</button>
- *     </div>
- *   );
- * }
- */

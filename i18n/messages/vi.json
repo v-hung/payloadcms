@@ -13,7 +13,8 @@
 		"featuredArticles": "Tin tức & Bài viết mới nhất",
 		"viewAllArticles": "Xem tất cả bài viết",
 		"readMore": "Đọc thêm",
-		"publishedOn": "Xuất bản ngày"
+		"publishedOn": "Xuất bản ngày",
+		"noFeaturedProductsAvailable": "Không có sản phẩm nổi bật"
 	},
 	"Navigation": {
 		"home": "Trang chủ",
