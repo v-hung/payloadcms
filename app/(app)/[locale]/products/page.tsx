@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { getProducts, getCategories } from "@/lib/payload-utils";
+import { getProducts, getCategories } from "@/services";
 import { ProductsClient } from "@/components/product/products-client";
 import type { Metadata } from "next";
 

@@ -6,10 +6,10 @@ import {
   getProducts,
   getManufacturingInfo,
   getPosts,
-} from "@/lib/payload-utils";
+} from "@/services";
 import { ProductCard } from "@/components/product/product-card";
 import { PostCard } from "@/components/content/post-card";
-import { lexicalToPlainText } from "@/lib/lexical-utils";
+import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext";
 import type { Metadata } from "next";
 
 type LocaleType = "en" | "vi";
@@ -152,7 +152,7 @@ export default async function Home({
           {manufacturing.description && (
             <div className="max-w-3xl mx-auto text-center mb-6">
               <p className="text-lg text-muted-foreground line-clamp-3">
-                {lexicalToPlainText(manufacturing.description)}
+                {convertLexicalToPlaintext({ data: manufacturing.description })}
               </p>
             </div>
           )}

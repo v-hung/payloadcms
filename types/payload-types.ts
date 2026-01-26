@@ -63,30 +63,32 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
-    users: UserAuthOperations;
+    admins: AdminAuthOperations;
   };
   blocks: {};
   collections: {
+    roles: Role;
+    admins: Admin;
     posts: Post;
     categories: Category;
     products: Product;
     'contact-inquiries': ContactInquiry;
     media: Media;
     'payload-kv': PayloadKv;
-    users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
+    roles: RolesSelect<false> | RolesSelect<true>;
+    admins: AdminsSelect<false> | AdminsSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     'contact-inquiries': ContactInquiriesSelect<false> | ContactInquiriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
-    users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -104,15 +106,15 @@ export interface Config {
     manufacturing: ManufacturingSelect<false> | ManufacturingSelect<true>;
   };
   locale: 'vi' | 'en';
-  user: User & {
-    collection: 'users';
+  user: Admin & {
+    collection: 'admins';
   };
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
-export interface UserAuthOperations {
+export interface AdminAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -132,11 +134,110 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles".
+ */
+export interface Role {
+  id: number;
+  /**
+   * Display name of the role
+   */
+  name: string;
+  /**
+   * Unique identifier for the role (lowercase, no spaces)
+   */
+  slug: string;
+  /**
+   * Brief description of this role's purpose
+   */
+  description?: string | null;
+  /**
+   * System roles cannot be deleted
+   */
+  isSystem?: boolean | null;
+  /**
+   * Order in role selection dropdown
+   */
+  displayOrder?: number | null;
+  /**
+   * Define what this role can do in each collection
+   */
+  permissions?: {
+    posts?: {
+      view?: boolean | null;
+      create?: boolean | null;
+      update?: boolean | null;
+      delete?: boolean | null;
+    };
+    products?: {
+      view?: boolean | null;
+      create?: boolean | null;
+      update?: boolean | null;
+      delete?: boolean | null;
+    };
+    categories?: {
+      view?: boolean | null;
+      create?: boolean | null;
+      update?: boolean | null;
+      delete?: boolean | null;
+    };
+    media?: {
+      view?: boolean | null;
+      create?: boolean | null;
+      update?: boolean | null;
+      delete?: boolean | null;
+    };
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "admins".
+ */
+export interface Admin {
+  id: number;
+  name: string;
+  /**
+   * User role determines permissions automatically
+   */
+  role: number | Role;
+  /**
+   * Contact phone number
+   */
+  phone?: string | null;
+  /**
+   * Account status
+   */
+  status: 'active' | 'inactive';
+  lastLogin?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
 export interface Post {
   id: number;
   title: string;
+  /**
+   * URL-friendly identifier. Auto-generated from title if left empty. Type title first to see auto-generated slug.
+   */
   slug: string;
   content: {
     root: {
@@ -159,7 +260,7 @@ export interface Post {
   excerpt?: string | null;
   status: 'draft' | 'published' | 'archived';
   publishedAt?: string | null;
-  author: number | User;
+  author: number | Admin;
   /**
    * Show on home page as featured post
    */
@@ -180,30 +281,6 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -264,6 +341,9 @@ export interface Media {
 export interface Category {
   id: number;
   name: string;
+  /**
+   * URL-friendly identifier. Auto-generated from name if left empty. Type name first to see auto-generated slug.
+   */
   slug: string;
   /**
    * Brief description of this category
@@ -292,6 +372,9 @@ export interface Category {
 export interface Product {
   id: number;
   name: string;
+  /**
+   * URL-friendly identifier. Auto-generated from name if left empty. Type name first to see auto-generated slug.
+   */
   slug: string;
   /**
    * Full product description with formatting
@@ -457,6 +540,14 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'roles';
+        value: number | Role;
+      } | null)
+    | ({
+        relationTo: 'admins';
+        value: number | Admin;
+      } | null)
+    | ({
         relationTo: 'posts';
         value: number | Post;
       } | null)
@@ -475,15 +566,11 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
-      } | null)
-    | ({
-        relationTo: 'users';
-        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: 'users';
-    value: number | User;
+    relationTo: 'admins';
+    value: number | Admin;
   };
   updatedAt: string;
   createdAt: string;
@@ -495,8 +582,8 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: number;
   user: {
-    relationTo: 'users';
-    value: number | User;
+    relationTo: 'admins';
+    value: number | Admin;
   };
   key?: string | null;
   value?:
@@ -521,6 +608,82 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles_select".
+ */
+export interface RolesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  isSystem?: T;
+  displayOrder?: T;
+  permissions?:
+    | T
+    | {
+        posts?:
+          | T
+          | {
+              view?: T;
+              create?: T;
+              update?: T;
+              delete?: T;
+            };
+        products?:
+          | T
+          | {
+              view?: T;
+              create?: T;
+              update?: T;
+              delete?: T;
+            };
+        categories?:
+          | T
+          | {
+              view?: T;
+              create?: T;
+              update?: T;
+              delete?: T;
+            };
+        media?:
+          | T
+          | {
+              view?: T;
+              create?: T;
+              update?: T;
+              delete?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "admins_select".
+ */
+export interface AdminsSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  phone?: T;
+  status?: T;
+  lastLogin?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -659,28 +822,6 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
- */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

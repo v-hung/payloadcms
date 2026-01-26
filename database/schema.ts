@@ -18,6 +18,164 @@ import {
 } from "@payloadcms/db-sqlite/drizzle/sqlite-core";
 import { sql, relations } from "@payloadcms/db-sqlite/drizzle";
 
+export const roles = sqliteTable(
+  "roles",
+  {
+    id: integer("id").primaryKey(),
+    slug: text("slug").notNull(),
+    isSystem: integer("is_system", { mode: "boolean" }).default(false),
+    displayOrder: numeric("display_order", { mode: "number" }).default(0),
+    permissions_posts_view: integer("permissions_posts_view", {
+      mode: "boolean",
+    }).default(false),
+    permissions_posts_create: integer("permissions_posts_create", {
+      mode: "boolean",
+    }).default(false),
+    permissions_posts_update: integer("permissions_posts_update", {
+      mode: "boolean",
+    }).default(false),
+    permissions_posts_delete: integer("permissions_posts_delete", {
+      mode: "boolean",
+    }).default(false),
+    permissions_products_view: integer("permissions_products_view", {
+      mode: "boolean",
+    }).default(false),
+    permissions_products_create: integer("permissions_products_create", {
+      mode: "boolean",
+    }).default(false),
+    permissions_products_update: integer("permissions_products_update", {
+      mode: "boolean",
+    }).default(false),
+    permissions_products_delete: integer("permissions_products_delete", {
+      mode: "boolean",
+    }).default(false),
+    permissions_categories_view: integer("permissions_categories_view", {
+      mode: "boolean",
+    }).default(false),
+    permissions_categories_create: integer("permissions_categories_create", {
+      mode: "boolean",
+    }).default(false),
+    permissions_categories_update: integer("permissions_categories_update", {
+      mode: "boolean",
+    }).default(false),
+    permissions_categories_delete: integer("permissions_categories_delete", {
+      mode: "boolean",
+    }).default(false),
+    permissions_media_view: integer("permissions_media_view", {
+      mode: "boolean",
+    }).default(false),
+    permissions_media_create: integer("permissions_media_create", {
+      mode: "boolean",
+    }).default(false),
+    permissions_media_update: integer("permissions_media_update", {
+      mode: "boolean",
+    }).default(false),
+    permissions_media_delete: integer("permissions_media_delete", {
+      mode: "boolean",
+    }).default(false),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+  },
+  (columns) => [
+    uniqueIndex("roles_slug_idx").on(columns.slug),
+    index("roles_updated_at_idx").on(columns.updatedAt),
+    index("roles_created_at_idx").on(columns.createdAt),
+  ],
+);
+
+export const roles_locales = sqliteTable(
+  "roles_locales",
+  {
+    name: text("name").notNull(),
+    description: text("description"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: integer("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex("roles_locales_locale_parent_id_unique").on(
+      columns._locale,
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [roles.id],
+      name: "roles_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const admins_sessions = sqliteTable(
+  "admins_sessions",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: text("id").primaryKey(),
+    createdAt: text("created_at").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+    expiresAt: text("expires_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+  },
+  (columns) => [
+    index("admins_sessions_order_idx").on(columns._order),
+    index("admins_sessions_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [admins.id],
+      name: "admins_sessions_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const admins = sqliteTable(
+  "admins",
+  {
+    id: integer("id").primaryKey(),
+    name: text("name").notNull(),
+    role: integer("role_id")
+      .notNull()
+      .references(() => roles.id, {
+        onDelete: "set null",
+      }),
+    phone: text("phone"),
+    status: text("status", { enum: ["active", "inactive"] })
+      .notNull()
+      .default("active"),
+    lastLogin: text("last_login").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    email: text("email").notNull(),
+    resetPasswordToken: text("reset_password_token"),
+    resetPasswordExpiration: text("reset_password_expiration").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+    salt: text("salt"),
+    hash: text("hash"),
+    loginAttempts: numeric("login_attempts", { mode: "number" }).default(0),
+    lockUntil: text("lock_until").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+  },
+  (columns) => [
+    index("admins_role_idx").on(columns.role),
+    index("admins_updated_at_idx").on(columns.updatedAt),
+    index("admins_created_at_idx").on(columns.createdAt),
+    uniqueIndex("admins_email_idx").on(columns.email),
+  ],
+);
+
 export const posts = sqliteTable(
   "posts",
   {
@@ -30,7 +188,7 @@ export const posts = sqliteTable(
     publishedAt: text("published_at").default(
       sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
     ),
-    author: integer("author_id").references(() => users.id, {
+    author: integer("author_id").references(() => admins.id, {
       onDelete: "set null",
     }),
     featured: integer("featured", { mode: "boolean" }).default(false),
@@ -95,7 +253,7 @@ export const _posts_v = sqliteTable(
     version_publishedAt: text("version_published_at").default(
       sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
     ),
-    version_author: integer("version_author_id").references(() => users.id, {
+    version_author: integer("version_author_id").references(() => admins.id, {
       onDelete: "set null",
     }),
     version_featured: integer("version_featured", { mode: "boolean" }).default(
@@ -560,59 +718,6 @@ export const payload_kv = sqliteTable(
   (columns) => [uniqueIndex("payload_kv_key_idx").on(columns.key)],
 );
 
-export const users_sessions = sqliteTable(
-  "users_sessions",
-  {
-    _order: integer("_order").notNull(),
-    _parentID: integer("_parent_id").notNull(),
-    id: text("id").primaryKey(),
-    createdAt: text("created_at").default(
-      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
-    ),
-    expiresAt: text("expires_at")
-      .notNull()
-      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
-  },
-  (columns) => [
-    index("users_sessions_order_idx").on(columns._order),
-    index("users_sessions_parent_id_idx").on(columns._parentID),
-    foreignKey({
-      columns: [columns["_parentID"]],
-      foreignColumns: [users.id],
-      name: "users_sessions_parent_id_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
-export const users = sqliteTable(
-  "users",
-  {
-    id: integer("id").primaryKey(),
-    updatedAt: text("updated_at")
-      .notNull()
-      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
-    createdAt: text("created_at")
-      .notNull()
-      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
-    email: text("email").notNull(),
-    resetPasswordToken: text("reset_password_token"),
-    resetPasswordExpiration: text("reset_password_expiration").default(
-      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
-    ),
-    salt: text("salt"),
-    hash: text("hash"),
-    loginAttempts: numeric("login_attempts", { mode: "number" }).default(0),
-    lockUntil: text("lock_until").default(
-      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
-    ),
-  },
-  (columns) => [
-    index("users_updated_at_idx").on(columns.updatedAt),
-    index("users_created_at_idx").on(columns.createdAt),
-    uniqueIndex("users_email_idx").on(columns.email),
-  ],
-);
-
 export const payload_locked_documents = sqliteTable(
   "payload_locked_documents",
   {
@@ -639,17 +744,20 @@ export const payload_locked_documents_rels = sqliteTable(
     order: integer("order"),
     parent: integer("parent_id").notNull(),
     path: text("path").notNull(),
+    rolesID: integer("roles_id"),
+    adminsID: integer("admins_id"),
     postsID: integer("posts_id"),
     categoriesID: integer("categories_id"),
     productsID: integer("products_id"),
     "contact-inquiriesID": integer("contact_inquiries_id"),
     mediaID: integer("media_id"),
-    usersID: integer("users_id"),
   },
   (columns) => [
     index("payload_locked_documents_rels_order_idx").on(columns.order),
     index("payload_locked_documents_rels_parent_idx").on(columns.parent),
     index("payload_locked_documents_rels_path_idx").on(columns.path),
+    index("payload_locked_documents_rels_roles_id_idx").on(columns.rolesID),
+    index("payload_locked_documents_rels_admins_id_idx").on(columns.adminsID),
     index("payload_locked_documents_rels_posts_id_idx").on(columns.postsID),
     index("payload_locked_documents_rels_categories_id_idx").on(
       columns.categoriesID,
@@ -661,11 +769,20 @@ export const payload_locked_documents_rels = sqliteTable(
       columns["contact-inquiriesID"],
     ),
     index("payload_locked_documents_rels_media_id_idx").on(columns.mediaID),
-    index("payload_locked_documents_rels_users_id_idx").on(columns.usersID),
     foreignKey({
       columns: [columns["parent"]],
       foreignColumns: [payload_locked_documents.id],
       name: "payload_locked_documents_rels_parent_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["rolesID"]],
+      foreignColumns: [roles.id],
+      name: "payload_locked_documents_rels_roles_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["adminsID"]],
+      foreignColumns: [admins.id],
+      name: "payload_locked_documents_rels_admins_fk",
     }).onDelete("cascade"),
     foreignKey({
       columns: [columns["postsID"]],
@@ -691,11 +808,6 @@ export const payload_locked_documents_rels = sqliteTable(
       columns: [columns["mediaID"]],
       foreignColumns: [media.id],
       name: "payload_locked_documents_rels_media_fk",
-    }).onDelete("cascade"),
-    foreignKey({
-      columns: [columns["usersID"]],
-      foreignColumns: [users.id],
-      name: "payload_locked_documents_rels_users_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -727,22 +839,22 @@ export const payload_preferences_rels = sqliteTable(
     order: integer("order"),
     parent: integer("parent_id").notNull(),
     path: text("path").notNull(),
-    usersID: integer("users_id"),
+    adminsID: integer("admins_id"),
   },
   (columns) => [
     index("payload_preferences_rels_order_idx").on(columns.order),
     index("payload_preferences_rels_parent_idx").on(columns.parent),
     index("payload_preferences_rels_path_idx").on(columns.path),
-    index("payload_preferences_rels_users_id_idx").on(columns.usersID),
+    index("payload_preferences_rels_admins_id_idx").on(columns.adminsID),
     foreignKey({
       columns: [columns["parent"]],
       foreignColumns: [payload_preferences.id],
       name: "payload_preferences_rels_parent_fk",
     }).onDelete("cascade"),
     foreignKey({
-      columns: [columns["usersID"]],
-      foreignColumns: [users.id],
-      name: "payload_preferences_rels_users_fk",
+      columns: [columns["adminsID"]],
+      foreignColumns: [admins.id],
+      name: "payload_preferences_rels_admins_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -902,6 +1014,38 @@ export const manufacturing_rels = sqliteTable(
   ],
 );
 
+export const relations_roles_locales = relations(roles_locales, ({ one }) => ({
+  _parentID: one(roles, {
+    fields: [roles_locales._parentID],
+    references: [roles.id],
+    relationName: "_locales",
+  }),
+}));
+export const relations_roles = relations(roles, ({ many }) => ({
+  _locales: many(roles_locales, {
+    relationName: "_locales",
+  }),
+}));
+export const relations_admins_sessions = relations(
+  admins_sessions,
+  ({ one }) => ({
+    _parentID: one(admins, {
+      fields: [admins_sessions._parentID],
+      references: [admins.id],
+      relationName: "sessions",
+    }),
+  }),
+);
+export const relations_admins = relations(admins, ({ one, many }) => ({
+  role: one(roles, {
+    fields: [admins.role],
+    references: [roles.id],
+    relationName: "role",
+  }),
+  sessions: many(admins_sessions, {
+    relationName: "sessions",
+  }),
+}));
 export const relations_posts_locales = relations(posts_locales, ({ one }) => ({
   _parentID: one(posts, {
     fields: [posts_locales._parentID],
@@ -910,9 +1054,9 @@ export const relations_posts_locales = relations(posts_locales, ({ one }) => ({
   }),
 }));
 export const relations_posts = relations(posts, ({ one, many }) => ({
-  author: one(users, {
+  author: one(admins, {
     fields: [posts.author],
-    references: [users.id],
+    references: [admins.id],
     relationName: "author",
   }),
   featuredImage: one(media, {
@@ -940,9 +1084,9 @@ export const relations__posts_v = relations(_posts_v, ({ one, many }) => ({
     references: [posts.id],
     relationName: "parent",
   }),
-  version_author: one(users, {
+  version_author: one(admins, {
     fields: [_posts_v.version_author],
-    references: [users.id],
+    references: [admins.id],
     relationName: "version_author",
   }),
   version_featuredImage: one(media, {
@@ -1067,21 +1211,6 @@ export const relations_media = relations(media, ({ many }) => ({
   }),
 }));
 export const relations_payload_kv = relations(payload_kv, () => ({}));
-export const relations_users_sessions = relations(
-  users_sessions,
-  ({ one }) => ({
-    _parentID: one(users, {
-      fields: [users_sessions._parentID],
-      references: [users.id],
-      relationName: "sessions",
-    }),
-  }),
-);
-export const relations_users = relations(users, ({ many }) => ({
-  sessions: many(users_sessions, {
-    relationName: "sessions",
-  }),
-}));
 export const relations_payload_locked_documents_rels = relations(
   payload_locked_documents_rels,
   ({ one }) => ({
@@ -1089,6 +1218,16 @@ export const relations_payload_locked_documents_rels = relations(
       fields: [payload_locked_documents_rels.parent],
       references: [payload_locked_documents.id],
       relationName: "_rels",
+    }),
+    rolesID: one(roles, {
+      fields: [payload_locked_documents_rels.rolesID],
+      references: [roles.id],
+      relationName: "roles",
+    }),
+    adminsID: one(admins, {
+      fields: [payload_locked_documents_rels.adminsID],
+      references: [admins.id],
+      relationName: "admins",
     }),
     postsID: one(posts, {
       fields: [payload_locked_documents_rels.postsID],
@@ -1115,11 +1254,6 @@ export const relations_payload_locked_documents_rels = relations(
       references: [media.id],
       relationName: "media",
     }),
-    usersID: one(users, {
-      fields: [payload_locked_documents_rels.usersID],
-      references: [users.id],
-      relationName: "users",
-    }),
   }),
 );
 export const relations_payload_locked_documents = relations(
@@ -1138,10 +1272,10 @@ export const relations_payload_preferences_rels = relations(
       references: [payload_preferences.id],
       relationName: "_rels",
     }),
-    usersID: one(users, {
-      fields: [payload_preferences_rels.usersID],
-      references: [users.id],
-      relationName: "users",
+    adminsID: one(admins, {
+      fields: [payload_preferences_rels.adminsID],
+      references: [admins.id],
+      relationName: "admins",
     }),
   }),
 );
@@ -1228,6 +1362,10 @@ export const relations_manufacturing = relations(manufacturing, ({ many }) => ({
 }));
 
 type DatabaseSchema = {
+  roles: typeof roles;
+  roles_locales: typeof roles_locales;
+  admins_sessions: typeof admins_sessions;
+  admins: typeof admins;
   posts: typeof posts;
   posts_locales: typeof posts_locales;
   _posts_v: typeof _posts_v;
@@ -1244,8 +1382,6 @@ type DatabaseSchema = {
   media: typeof media;
   media_locales: typeof media_locales;
   payload_kv: typeof payload_kv;
-  users_sessions: typeof users_sessions;
-  users: typeof users;
   payload_locked_documents: typeof payload_locked_documents;
   payload_locked_documents_rels: typeof payload_locked_documents_rels;
   payload_preferences: typeof payload_preferences;
@@ -1257,6 +1393,10 @@ type DatabaseSchema = {
   manufacturing: typeof manufacturing;
   manufacturing_locales: typeof manufacturing_locales;
   manufacturing_rels: typeof manufacturing_rels;
+  relations_roles_locales: typeof relations_roles_locales;
+  relations_roles: typeof relations_roles;
+  relations_admins_sessions: typeof relations_admins_sessions;
+  relations_admins: typeof relations_admins;
   relations_posts_locales: typeof relations_posts_locales;
   relations_posts: typeof relations_posts;
   relations__posts_v_locales: typeof relations__posts_v_locales;
@@ -1273,8 +1413,6 @@ type DatabaseSchema = {
   relations_media_locales: typeof relations_media_locales;
   relations_media: typeof relations_media;
   relations_payload_kv: typeof relations_payload_kv;
-  relations_users_sessions: typeof relations_users_sessions;
-  relations_users: typeof relations_users;
   relations_payload_locked_documents_rels: typeof relations_payload_locked_documents_rels;
   relations_payload_locked_documents: typeof relations_payload_locked_documents;
   relations_payload_preferences_rels: typeof relations_payload_preferences_rels;

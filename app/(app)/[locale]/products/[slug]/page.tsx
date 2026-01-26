@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { getProductBySlug } from "@/lib/payload-utils";
+import { getProductBySlug } from "@/services";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";

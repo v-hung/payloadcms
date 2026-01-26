@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { getCompanyInfo } from "@/lib/payload-utils";
+import { getCompanyInfo } from "@/services";
 import type { Metadata } from "next";
 
 type LocaleType = "en" | "vi";

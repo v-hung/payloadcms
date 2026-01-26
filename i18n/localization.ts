@@ -1,6 +1,6 @@
 import { LocalizationConfig } from "payload";
 
-const localization: LocalizationConfig = {
+const localization = {
   defaultLocale: "vi",
   fallback: true,
   locales: [
@@ -19,6 +19,6 @@ const localization: LocalizationConfig = {
       },
     },
   ],
-};
+} as const satisfies LocalizationConfig;
 
 export default localization;

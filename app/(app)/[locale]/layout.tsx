@@ -1,7 +1,12 @@
 import { NextIntlClientProvider } from "next-intl";
+import { Inter } from "next/font/google";
 import { Header } from "@/components/navigation/header";
 import { Footer } from "@/components/navigation/footer";
-import "../globals.css";
+import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin-ext"],
+});
 
 export default async function RootLayout({
   children,
@@ -16,7 +21,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className="antialiased flex flex-col min-h-screen">
+      <body
+        className={`${inter.className} antialiased flex flex-col min-h-screen`}
+      >
         <NextIntlClientProvider>
           <Header />
           <main className="flex-1">{children}</main>

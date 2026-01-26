@@ -1,7 +1,12 @@
 import sharp from "sharp";
+import path from "path";
+import { fileURLToPath } from "url";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { buildConfig } from "payload";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import { en } from "@payloadcms/translations/languages/en";
 import { vi } from "@payloadcms/translations/languages/vi";
@@ -13,6 +18,8 @@ import { Categories } from "./collections/categories";
 import { Products } from "./collections/products";
 import { ContactInquiries } from "./collections/contact-inquiries";
 import { Media } from "./collections/media";
+import { Admin } from "./collections/admin";
+import { Roles } from "./collections/roles";
 
 import { CompanyInfo } from "./globals/company-info";
 import { Manufacturing } from "./globals/manufacturing";
@@ -22,7 +29,15 @@ export default buildConfig({
   editor: lexicalEditor(),
 
   // Collections
-  collections: [Posts, Categories, Products, ContactInquiries, Media],
+  collections: [
+    Roles,
+    Admin,
+    Posts,
+    Categories,
+    Products,
+    ContactInquiries,
+    Media,
+  ],
 
   // Globals
   globals: [CompanyInfo, Manufacturing],
@@ -34,7 +49,7 @@ export default buildConfig({
   },
 
   // Localization - Content multilingual support
-  localization,
+  localization: localization,
 
   // Your Payload secret - should be a complex and secure string, unguessable
   secret: process.env.PAYLOAD_SECRET || "",
@@ -46,7 +61,23 @@ export default buildConfig({
       authToken: process.env.DATABASE_AUTH_TOKEN,
     },
     push: process.env.NODE_ENV === "development",
+    migrationDir: path.resolve(__dirname, "database/migrations"),
+    generateSchemaOutputFile: path.resolve(__dirname, "database/schema.ts"),
   }),
+
+  // Development Tooling & Auto-generation
+  typescript: {
+    outputFile: path.resolve(__dirname, "types/payload-types.ts"),
+  },
+  graphQL: {
+    schemaOutputFile: path.resolve(__dirname, "generated/schema.graphql"),
+  },
+
+  // Seed script to populate initial data
+  onInit: async (payload) => {
+    await import("./scripts/seed").then(({ seed }) => seed(payload));
+  },
+
   // If you want to resize images, crop, set focal point, etc.
   // make sure to install it and pass it to the config.
   // This is optional - if you don't need to do these things,

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { createCollectionAccess } from "../lib/permissions.utils";
 
 /**
  * Media Collection Configuration
@@ -6,6 +7,13 @@ import type { CollectionConfig } from "payload";
  */
 export const Media: CollectionConfig = {
   slug: "media",
+
+  // Access control based on granular permissions
+  access: {
+    ...createCollectionAccess("media"),
+    // Public read access for frontend
+    read: () => true,
+  },
 
   // Admin configuration
   admin: {
@@ -47,11 +55,6 @@ export const Media: CollectionConfig = {
         position: "center",
       },
     ],
-  },
-
-  // Access control
-  access: {
-    read: () => true, // Public read access for media files
   },
 
   // Fields definition

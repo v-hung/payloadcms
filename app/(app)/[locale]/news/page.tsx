@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { getPosts } from "@/lib/payload-utils";
+import { getPosts } from "@/services";
 import { PostCard } from "@/components/content/post-card";
 import type { Metadata } from "next";
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createContactInquiry } from "@/lib/payload-utils";
+import { createContactInquiry } from "@/services";
 
 export async function POST(request: NextRequest) {
   try {

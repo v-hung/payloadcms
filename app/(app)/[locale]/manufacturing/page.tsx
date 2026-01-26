@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { getManufacturingInfo } from "@/lib/payload-utils";
-import { lexicalToHTML } from "@/lib/lexical-utils";
+import { getManufacturingInfo } from "@/services";
+import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 import type { Metadata } from "next";
 
 type LocaleType = "en" | "vi";
@@ -20,9 +20,7 @@ export async function generateMetadata({
   const manufacturing = await getManufacturingInfo(locale as LocaleType);
 
   if (!manufacturing) {
-    return {
-      title: "Manufacturing",
-    };
+    return {};
   }
 
   return {
@@ -56,7 +54,7 @@ export default async function ManufacturingPage({
           <div
             className="prose max-w-none text-lg"
             dangerouslySetInnerHTML={{
-              __html: lexicalToHTML(manufacturing.description),
+              __html: convertLexicalToHTML({ data: manufacturing.description }),
             }}
           />
         )}
@@ -110,7 +108,9 @@ export default async function ManufacturingPage({
           <div
             className="prose max-w-none"
             dangerouslySetInnerHTML={{
-              __html: lexicalToHTML(manufacturing.certifications),
+              __html: convertLexicalToHTML({
+                data: manufacturing.certifications,
+              }),
             }}
           />
         </div>
@@ -123,7 +123,7 @@ export default async function ManufacturingPage({
           <div
             className="prose max-w-none"
             dangerouslySetInnerHTML={{
-              __html: lexicalToHTML(manufacturing.processes),
+              __html: convertLexicalToHTML({ data: manufacturing.processes }),
             }}
           />
         </div>

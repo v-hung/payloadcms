@@ -1,4 +1,6 @@
 import type { CollectionConfig } from "payload";
+import { createCollectionAccess } from "../lib/permissions.utils";
+import { createSlugHook } from "../lib/slug-utils";
 
 /**
  * Posts Collection Configuration
@@ -6,6 +8,9 @@ import type { CollectionConfig } from "payload";
  */
 export const Posts: CollectionConfig = {
   slug: "posts",
+
+  // Access control based on granular permissions
+  access: createCollectionAccess("posts"),
 
   // Admin configuration
   admin: {
@@ -42,22 +47,19 @@ export const Posts: CollectionConfig = {
       label: { en: "Slug", vi: "Đường dẫn" },
       admin: {
         position: "sidebar",
+        description: {
+          en: "URL-friendly identifier. Auto-generated from title if left empty. Type title first to see auto-generated slug.",
+          vi: "Định danh URL. Tự động tạo từ tiêu đề nếu để trống. Nhập tiêu đề trước để xem slug tự động tạo.",
+        },
+        components: {
+          Field: {
+            path: "@/components/admin/SlugField",
+            clientProps: { sourceField: "title" },
+          },
+        },
       },
       hooks: {
-        beforeValidate: [
-          ({ value, data }) => {
-            if (!value && data?.title) {
-              // Auto-generate slug from title
-              return data.title
-                .toLowerCase()
-                .replace(/[^\w\s-]/g, "")
-                .replace(/\s+/g, "-")
-                .replace(/--+/g, "-")
-                .trim();
-            }
-            return value;
-          },
-        ],
+        beforeValidate: [createSlugHook("title")],
       },
     },
 
@@ -111,7 +113,7 @@ export const Posts: CollectionConfig = {
     {
       name: "author",
       type: "relationship",
-      relationTo: "users",
+      relationTo: "admins",
       required: true,
       label: { en: "Author", vi: "Tác giả" },
       admin: {

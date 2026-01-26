@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { getPostBySlug } from "@/lib/payload-utils";
-import { lexicalToHTML } from "@/lib/lexical-utils";
+import { getPostBySlug } from "@/services";
+import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 import { format } from "date-fns";
 import type { Metadata } from "next";
 
@@ -103,7 +103,7 @@ export default async function NewsDetailPage({ params }: { params: Params }) {
           <div
             className="prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{
-              __html: lexicalToHTML(post.content),
+              __html: convertLexicalToHTML({ data: post.content }),
             }}
           />
         )}

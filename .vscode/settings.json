@@ -1,17 +1,22 @@
 {
-    "i18n-ally.localesPaths": [
-        "i18n",
-        "i18n/messages"
-    ],
-    "chat.promptFilesRecommendations": {
-        "speckit.constitution": true,
-        "speckit.specify": true,
-        "speckit.plan": true,
-        "speckit.tasks": true,
-        "speckit.implement": true
-    },
-    "chat.tools.terminal.autoApprove": {
-        ".specify/scripts/bash/": true,
-        ".specify/scripts/powershell/": true
-    }
+	"i18n-ally.localesPaths": [
+		// "i18n",
+		"i18n/messages"
+	],
+	// "i18n-ally.defaultNamespace": "",
+	// "i18n-ally.enabledFrameworks": [
+	// 	"next-intl"
+	// ],
+	"chat.promptFilesRecommendations": {
+		"speckit.constitution": true,
+		"speckit.specify": true,
+		"speckit.plan": true,
+		"speckit.tasks": true,
+		"speckit.implement": true
+	},
+	"chat.tools.terminal.autoApprove": {
+		".specify/scripts/bash/": true,
+		".specify/scripts/powershell/": true
+	},
+	"i18n-ally.keystyle": "nested"
 }
