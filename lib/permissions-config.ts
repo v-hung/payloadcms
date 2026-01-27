@@ -30,6 +30,13 @@ export const PERMISSION_COLLECTIONS = [
       vi: "Phương tiện",
     },
   },
+  {
+    slug: "users",
+    labels: {
+      en: "Users",
+      vi: "Người dùng",
+    },
+  },
 ] as const;
 
 /**

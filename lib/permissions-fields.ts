@@ -2,7 +2,7 @@ import type { Field } from "payload";
 import {
   PERMISSION_ACTIONS,
   PERMISSION_COLLECTIONS,
-} from "./permissions.config";
+} from "./permissions-config";
 
 /**
  * Auto-generate permission fields from config

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { generatePermissionFields } from "../lib/permissions.fields";
+import { generatePermissionFields } from "../lib/permissions-fields";
 
 /**
  * Roles Collection Configuration

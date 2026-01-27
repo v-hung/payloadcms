@@ -1,6 +1,6 @@
 import { cache } from "react";
-import { getPayloadClient } from "@/lib/payload.utils";
-import { LocaleType } from "@/lib/locale.utils";
+import { getPayloadClient } from "@/lib/payload-utils";
+import { LocaleType } from "@/lib/locale-utils";
 
 /**
  * Get published posts/articles

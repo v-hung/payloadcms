@@ -1,9 +1,18 @@
 "use client";
 
 import React, { useEffect, useCallback } from "react";
-import { useField, TextField, useFormFields } from "@payloadcms/ui";
+import {
+  useField,
+  TextField,
+  useFormFields,
+  useTranslation,
+} from "@payloadcms/ui";
 import { generateSlug } from "@/lib/slug-utils";
 import { TextFieldClientProps } from "payload";
+import {
+  PayloadTranslationsKeys,
+  PayloadTranslationsObject,
+} from "@/i18n/payload-translations";
 
 type SlugFieldProps = TextFieldClientProps & {
   path: string;
@@ -13,22 +22,17 @@ type SlugFieldProps = TextFieldClientProps & {
 const SlugField: React.FC<SlugFieldProps> = (props) => {
   const { path, sourceField } = props;
 
-  // Lấy dữ liệu của chính field này
   const { setValue, initialValue } = useField<string>({ path });
 
-  // Lấy giá trị của source field (ví dụ: "title") từ form state
+  const { t } = useTranslation<
+    PayloadTranslationsObject,
+    PayloadTranslationsKeys
+  >();
+
   const sourceFieldValue = useFormFields(
     ([fields]) => fields[sourceField]?.value as string,
   );
 
-  // Hàm generate slug
-  const handleGenerate = useCallback(() => {
-    if (sourceFieldValue) {
-      setValue(generateSlug(sourceFieldValue));
-    }
-  }, [sourceFieldValue, setValue]);
-
-  // Tự động generate khi tạo mới (giống logic cũ của bạn)
   useEffect(() => {
     if (!initialValue && sourceFieldValue) {
       setValue(generateSlug(sourceFieldValue));
@@ -37,13 +41,16 @@ const SlugField: React.FC<SlugFieldProps> = (props) => {
     }
   }, [sourceFieldValue, initialValue, setValue]);
 
+  const handleGenerate = useCallback(() => {
+    if (sourceFieldValue) {
+      setValue(generateSlug(sourceFieldValue));
+    }
+  }, [sourceFieldValue, setValue]);
+
   return (
     <div style={{ position: "relative" }}>
-      <TextField
-        {...props} // Kế thừa toàn bộ logic Label, Error, Description, Style của Payload
-      />
+      <TextField {...props} />
 
-      {/* Nút bấm được đặt tuyệt đối so với wrapper để không làm hỏng layout của TextField */}
       <button
         type="button"
         onClick={handleGenerate}
@@ -65,7 +72,7 @@ const SlugField: React.FC<SlugFieldProps> = (props) => {
           zIndex: 1,
         }}
       >
-        Auto-Generate
+        {t("general:autoGenerate")}
       </button>
     </div>
   );

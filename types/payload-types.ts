@@ -69,7 +69,10 @@ export interface Config {
   collections: {
     roles: Role;
     admins: Admin;
+    users: User;
     posts: Post;
+    pages: Page;
+    showcases: Showcase;
     categories: Category;
     products: Product;
     'contact-inquiries': ContactInquiry;
@@ -83,7 +86,10 @@ export interface Config {
   collectionsSelect: {
     roles: RolesSelect<false> | RolesSelect<true>;
     admins: AdminsSelect<false> | AdminsSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    showcases: ShowcasesSelect<false> | ShowcasesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     'contact-inquiries': ContactInquiriesSelect<false> | ContactInquiriesSelect<true>;
@@ -99,11 +105,9 @@ export interface Config {
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('vi' | 'en') | ('vi' | 'en')[];
   globals: {
     'company-info': CompanyInfo;
-    manufacturing: Manufacturing;
   };
   globalsSelect: {
     'company-info': CompanyInfoSelect<false> | CompanyInfoSelect<true>;
-    manufacturing: ManufacturingSelect<false> | ManufacturingSelect<true>;
   };
   locale: 'vi' | 'en';
   user: Admin & {
@@ -186,6 +190,12 @@ export interface Role {
       update?: boolean | null;
       delete?: boolean | null;
     };
+    users?: {
+      view?: boolean | null;
+      create?: boolean | null;
+      update?: boolean | null;
+      delete?: boolean | null;
+    };
   };
   updatedAt: string;
   createdAt: string;
@@ -227,6 +237,37 @@ export interface Admin {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name: string;
+  /**
+   * Contact phone number
+   */
+  phone?: string | null;
+  /**
+   * Full address
+   */
+  address?: string | null;
+  /**
+   * Account status
+   */
+  status: 'active' | 'inactive' | 'suspended';
+  verified?: boolean | null;
+  lastLogin?: string | null;
+  /**
+   * Receive product updates and news
+   */
+  newsletter?: boolean | null;
+  preferences?: {
+    language?: ('vi' | 'en') | null;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -336,6 +377,125 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier. Auto-generated from title if left empty. Type title first to see auto-generated slug.
+   */
+  slug: string;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Short description for preview
+   */
+  excerpt?: string | null;
+  status: 'draft' | 'published' | 'archived';
+  publishedAt?: string | null;
+  /**
+   * Show on home page as featured page
+   */
+  featured?: boolean | null;
+  /**
+   * Sort order for featured pages on home page (lower numbers appear first)
+   */
+  displayOrder: number;
+  /**
+   * Custom title for search engines (overrides page title)
+   */
+  seoTitle?: string | null;
+  /**
+   * Meta description for search engines
+   */
+  seoDescription?: string | null;
+  featuredImage?: (number | null) | Media;
+  createdAt: string;
+  updatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "showcases".
+ */
+export interface Showcase {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier. Auto-generated from title if left empty. Type title first to see auto-generated slug.
+   */
+  slug: string;
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Short description for preview
+   */
+  excerpt?: string | null;
+  category: 'project' | 'case-study' | 'achievement' | 'partnership' | 'award' | 'other';
+  /**
+   * Showcase images (multiple images supported)
+   */
+  images?: (number | Media)[] | null;
+  status: 'draft' | 'published' | 'archived';
+  /**
+   * Show on home page as featured showcase
+   */
+  featured?: boolean | null;
+  /**
+   * Sort order for display (lower numbers appear first)
+   */
+  displayOrder: number;
+  /**
+   * Client or partner name (if applicable)
+   */
+  client?: string | null;
+  /**
+   * Project/achievement date
+   */
+  date?: string | null;
+  /**
+   * Project/event location (if applicable)
+   */
+  location?: string | null;
+  /**
+   * Custom title for search engines (overrides showcase title)
+   */
+  seoTitle?: string | null;
+  /**
+   * Meta description for search engines
+   */
+  seoDescription?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -551,8 +711,20 @@ export interface PayloadLockedDocument {
         value: number | Admin;
       } | null)
     | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
         relationTo: 'posts';
         value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'showcases';
+        value: number | Showcase;
       } | null)
     | ({
         relationTo: 'categories';
@@ -657,6 +829,14 @@ export interface RolesSelect<T extends boolean = true> {
               update?: T;
               delete?: T;
             };
+        users?:
+          | T
+          | {
+              view?: T;
+              create?: T;
+              update?: T;
+              delete?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
@@ -690,6 +870,26 @@ export interface AdminsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  address?: T;
+  status?: T;
+  verified?: T;
+  lastLogin?: T;
+  newsletter?: T;
+  preferences?:
+    | T
+    | {
+        language?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
@@ -708,6 +908,47 @@ export interface PostsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  content?: T;
+  excerpt?: T;
+  status?: T;
+  publishedAt?: T;
+  featured?: T;
+  displayOrder?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  featuredImage?: T;
+  createdAt?: T;
+  updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "showcases_select".
+ */
+export interface ShowcasesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  excerpt?: T;
+  category?: T;
+  images?: T;
+  status?: T;
+  featured?: T;
+  displayOrder?: T;
+  client?: T;
+  date?: T;
+  location?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  createdAt?: T;
+  updatedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -975,97 +1216,6 @@ export interface CompanyInfo {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "manufacturing".
- */
-export interface Manufacturing {
-  id: number;
-  /**
-   * Section headline for manufacturing page
-   */
-  headline: string;
-  /**
-   * Overview of manufacturing capabilities
-   */
-  description: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  /**
-   * Factory size (e.g., "50,000 sqm")
-   */
-  factorySize?: string | null;
-  /**
-   * Monthly or annual production capacity
-   */
-  productionCapacity?: string | null;
-  /**
-   * Typical order lead times
-   */
-  leadTimes?: string | null;
-  /**
-   * Quality certifications and standards
-   */
-  certifications?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Description of manufacturing processes
-   */
-  processes?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Factory photos and process documentation
-   */
-  images?: (number | Media)[] | null;
-  /**
-   * Custom title for search engines
-   */
-  seoTitle?: string | null;
-  /**
-   * Meta description for search engines
-   */
-  seoDescription?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "company-info_select".
  */
 export interface CompanyInfoSelect<T extends boolean = true> {
@@ -1086,25 +1236,6 @@ export interface CompanyInfoSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "manufacturing_select".
- */
-export interface ManufacturingSelect<T extends boolean = true> {
-  headline?: T;
-  description?: T;
-  factorySize?: T;
-  productionCapacity?: T;
-  leadTimes?: T;
-  certifications?: T;
-  processes?: T;
-  images?: T;
-  seoTitle?: T;
-  seoDescription?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

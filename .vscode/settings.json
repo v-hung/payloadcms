@@ -1,7 +1,8 @@
 {
 	"i18n-ally.localesPaths": [
 		// "i18n",
-		"i18n/messages"
+		"i18n/messages",
+		"i18n/payload-translations.ts",
 	],
 	// "i18n-ally.defaultNamespace": "",
 	// "i18n-ally.enabledFrameworks": [

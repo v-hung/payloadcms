@@ -1,14 +1,21 @@
 import { NextIntlClientProvider } from "next-intl";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans_JP } from "next/font/google";
 import { Header } from "@/components/navigation/header";
 import { Footer } from "@/components/navigation/footer";
 import "./globals.css";
 import { getCompanyInfo } from "@/services";
-import { LocaleType } from "@/lib/locale.utils";
+import { LocaleType } from "@/lib/locale-utils";
 
 const inter = Inter({
-  subsets: ["latin-ext"],
+  subsets: ["vietnamese"],
+  variable: "--font-inter",
 });
+
+// const notoSansJp = Noto_Sans_JP({
+//   weight: ["400", "700"],
+//   display: "swap",
+//   variable: "--font-noto-sans-jp",
+// });
 
 export default async function RootLayout({
   children,
@@ -26,7 +33,10 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${inter.className} antialiased flex flex-col min-h-screen`}
+        className={`${inter.variable} antialiased flex flex-col min-h-screen`}
+        style={{
+          fontFamily: "var(--font-inter)",
+        }}
       >
         <NextIntlClientProvider>
           <Header companyInfo={companyInfo} />

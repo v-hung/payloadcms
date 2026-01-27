@@ -73,6 +73,18 @@ export const roles = sqliteTable(
     permissions_media_delete: integer("permissions_media_delete", {
       mode: "boolean",
     }).default(false),
+    permissions_users_view: integer("permissions_users_view", {
+      mode: "boolean",
+    }).default(false),
+    permissions_users_create: integer("permissions_users_create", {
+      mode: "boolean",
+    }).default(false),
+    permissions_users_update: integer("permissions_users_update", {
+      mode: "boolean",
+    }).default(false),
+    permissions_users_delete: integer("permissions_users_delete", {
+      mode: "boolean",
+    }).default(false),
     updatedAt: text("updated_at")
       .notNull()
       .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
@@ -173,6 +185,37 @@ export const admins = sqliteTable(
     index("admins_updated_at_idx").on(columns.updatedAt),
     index("admins_created_at_idx").on(columns.createdAt),
     uniqueIndex("admins_email_idx").on(columns.email),
+  ],
+);
+
+export const users = sqliteTable(
+  "users",
+  {
+    id: integer("id").primaryKey(),
+    name: text("name").notNull(),
+    phone: text("phone"),
+    address: text("address"),
+    status: text("status", { enum: ["active", "inactive", "suspended"] })
+      .notNull()
+      .default("active"),
+    verified: integer("verified", { mode: "boolean" }).default(false),
+    lastLogin: text("last_login").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+    newsletter: integer("newsletter", { mode: "boolean" }).default(false),
+    preferences_language: text("preferences_language", {
+      enum: ["vi", "en"],
+    }).default("vi"),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+  },
+  (columns) => [
+    index("users_updated_at_idx").on(columns.updatedAt),
+    index("users_created_at_idx").on(columns.createdAt),
   ],
 );
 
@@ -329,6 +372,149 @@ export const _posts_v_locales = sqliteTable(
       columns: [columns["_parentID"]],
       foreignColumns: [_posts_v.id],
       name: "_posts_v_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const pages = sqliteTable(
+  "pages",
+  {
+    id: integer("id").primaryKey(),
+    slug: text("slug").notNull(),
+    status: text("status", { enum: ["draft", "published", "archived"] })
+      .notNull()
+      .default("draft"),
+    publishedAt: text("published_at").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+    featured: integer("featured", { mode: "boolean" }).default(false),
+    displayOrder: numeric("display_order", { mode: "number" })
+      .notNull()
+      .default(0),
+    featuredImage: integer("featured_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+  },
+  (columns) => [
+    uniqueIndex("pages_slug_idx").on(columns.slug),
+    index("pages_featured_image_idx").on(columns.featuredImage),
+  ],
+);
+
+export const pages_locales = sqliteTable(
+  "pages_locales",
+  {
+    title: text("title").notNull(),
+    content: text("content", { mode: "json" }).notNull(),
+    excerpt: text("excerpt"),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: integer("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex("pages_locales_locale_parent_id_unique").on(
+      columns._locale,
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [pages.id],
+      name: "pages_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const showcases = sqliteTable(
+  "showcases",
+  {
+    id: integer("id").primaryKey(),
+    slug: text("slug").notNull(),
+    category: text("category", {
+      enum: [
+        "project",
+        "case-study",
+        "achievement",
+        "partnership",
+        "award",
+        "other",
+      ],
+    }).notNull(),
+    status: text("status", { enum: ["draft", "published", "archived"] })
+      .notNull()
+      .default("draft"),
+    featured: integer("featured", { mode: "boolean" }).default(false),
+    displayOrder: numeric("display_order", { mode: "number" })
+      .notNull()
+      .default(0),
+    date: text("date").default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+  },
+  (columns) => [uniqueIndex("showcases_slug_idx").on(columns.slug)],
+);
+
+export const showcases_locales = sqliteTable(
+  "showcases_locales",
+  {
+    title: text("title").notNull(),
+    description: text("description", { mode: "json" }).notNull(),
+    excerpt: text("excerpt"),
+    client: text("client"),
+    location: text("location"),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: integer("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex("showcases_locales_locale_parent_id_unique").on(
+      columns._locale,
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [showcases.id],
+      name: "showcases_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const showcases_rels = sqliteTable(
+  "showcases_rels",
+  {
+    id: integer("id").primaryKey(),
+    order: integer("order"),
+    parent: integer("parent_id").notNull(),
+    path: text("path").notNull(),
+    mediaID: integer("media_id"),
+  },
+  (columns) => [
+    index("showcases_rels_order_idx").on(columns.order),
+    index("showcases_rels_parent_idx").on(columns.parent),
+    index("showcases_rels_path_idx").on(columns.path),
+    index("showcases_rels_media_id_idx").on(columns.mediaID),
+    foreignKey({
+      columns: [columns["parent"]],
+      foreignColumns: [showcases.id],
+      name: "showcases_rels_parent_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["mediaID"]],
+      foreignColumns: [media.id],
+      name: "showcases_rels_media_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -689,7 +875,7 @@ export const media = sqliteTable(
 export const media_locales = sqliteTable(
   "media_locales",
   {
-    alt: text("alt").notNull(),
+    alt: text("alt"),
     caption: text("caption"),
     id: integer("id").primaryKey(),
     _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
@@ -746,7 +932,10 @@ export const payload_locked_documents_rels = sqliteTable(
     path: text("path").notNull(),
     rolesID: integer("roles_id"),
     adminsID: integer("admins_id"),
+    usersID: integer("users_id"),
     postsID: integer("posts_id"),
+    pagesID: integer("pages_id"),
+    showcasesID: integer("showcases_id"),
     categoriesID: integer("categories_id"),
     productsID: integer("products_id"),
     "contact-inquiriesID": integer("contact_inquiries_id"),
@@ -758,7 +947,12 @@ export const payload_locked_documents_rels = sqliteTable(
     index("payload_locked_documents_rels_path_idx").on(columns.path),
     index("payload_locked_documents_rels_roles_id_idx").on(columns.rolesID),
     index("payload_locked_documents_rels_admins_id_idx").on(columns.adminsID),
+    index("payload_locked_documents_rels_users_id_idx").on(columns.usersID),
     index("payload_locked_documents_rels_posts_id_idx").on(columns.postsID),
+    index("payload_locked_documents_rels_pages_id_idx").on(columns.pagesID),
+    index("payload_locked_documents_rels_showcases_id_idx").on(
+      columns.showcasesID,
+    ),
     index("payload_locked_documents_rels_categories_id_idx").on(
       columns.categoriesID,
     ),
@@ -785,9 +979,24 @@ export const payload_locked_documents_rels = sqliteTable(
       name: "payload_locked_documents_rels_admins_fk",
     }).onDelete("cascade"),
     foreignKey({
+      columns: [columns["usersID"]],
+      foreignColumns: [users.id],
+      name: "payload_locked_documents_rels_users_fk",
+    }).onDelete("cascade"),
+    foreignKey({
       columns: [columns["postsID"]],
       foreignColumns: [posts.id],
       name: "payload_locked_documents_rels_posts_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["pagesID"]],
+      foreignColumns: [pages.id],
+      name: "payload_locked_documents_rels_pages_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["showcasesID"]],
+      foreignColumns: [showcases.id],
+      name: "payload_locked_documents_rels_showcases_fk",
     }).onDelete("cascade"),
     foreignKey({
       columns: [columns["categoriesID"]],
@@ -948,72 +1157,6 @@ export const company_info_locales = sqliteTable(
   ],
 );
 
-export const manufacturing = sqliteTable("manufacturing", {
-  id: integer("id").primaryKey(),
-  updatedAt: text("updated_at").default(
-    sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
-  ),
-  createdAt: text("created_at").default(
-    sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
-  ),
-});
-
-export const manufacturing_locales = sqliteTable(
-  "manufacturing_locales",
-  {
-    headline: text("headline").notNull(),
-    description: text("description", { mode: "json" }).notNull(),
-    factorySize: text("factory_size"),
-    productionCapacity: text("production_capacity"),
-    leadTimes: text("lead_times"),
-    certifications: text("certifications", { mode: "json" }),
-    processes: text("processes", { mode: "json" }),
-    seoTitle: text("seo_title"),
-    seoDescription: text("seo_description"),
-    id: integer("id").primaryKey(),
-    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
-    _parentID: integer("_parent_id").notNull(),
-  },
-  (columns) => [
-    uniqueIndex("manufacturing_locales_locale_parent_id_unique").on(
-      columns._locale,
-      columns._parentID,
-    ),
-    foreignKey({
-      columns: [columns["_parentID"]],
-      foreignColumns: [manufacturing.id],
-      name: "manufacturing_locales_parent_id_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
-export const manufacturing_rels = sqliteTable(
-  "manufacturing_rels",
-  {
-    id: integer("id").primaryKey(),
-    order: integer("order"),
-    parent: integer("parent_id").notNull(),
-    path: text("path").notNull(),
-    mediaID: integer("media_id"),
-  },
-  (columns) => [
-    index("manufacturing_rels_order_idx").on(columns.order),
-    index("manufacturing_rels_parent_idx").on(columns.parent),
-    index("manufacturing_rels_path_idx").on(columns.path),
-    index("manufacturing_rels_media_id_idx").on(columns.mediaID),
-    foreignKey({
-      columns: [columns["parent"]],
-      foreignColumns: [manufacturing.id],
-      name: "manufacturing_rels_parent_fk",
-    }).onDelete("cascade"),
-    foreignKey({
-      columns: [columns["mediaID"]],
-      foreignColumns: [media.id],
-      name: "manufacturing_rels_media_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
 export const relations_roles_locales = relations(roles_locales, ({ one }) => ({
   _parentID: one(roles, {
     fields: [roles_locales._parentID],
@@ -1046,6 +1189,7 @@ export const relations_admins = relations(admins, ({ one, many }) => ({
     relationName: "sessions",
   }),
 }));
+export const relations_users = relations(users, () => ({}));
 export const relations_posts_locales = relations(posts_locales, ({ one }) => ({
   _parentID: one(posts, {
     fields: [posts_locales._parentID],
@@ -1096,6 +1240,56 @@ export const relations__posts_v = relations(_posts_v, ({ one, many }) => ({
   }),
   _locales: many(_posts_v_locales, {
     relationName: "_locales",
+  }),
+}));
+export const relations_pages_locales = relations(pages_locales, ({ one }) => ({
+  _parentID: one(pages, {
+    fields: [pages_locales._parentID],
+    references: [pages.id],
+    relationName: "_locales",
+  }),
+}));
+export const relations_pages = relations(pages, ({ one, many }) => ({
+  featuredImage: one(media, {
+    fields: [pages.featuredImage],
+    references: [media.id],
+    relationName: "featuredImage",
+  }),
+  _locales: many(pages_locales, {
+    relationName: "_locales",
+  }),
+}));
+export const relations_showcases_locales = relations(
+  showcases_locales,
+  ({ one }) => ({
+    _parentID: one(showcases, {
+      fields: [showcases_locales._parentID],
+      references: [showcases.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_showcases_rels = relations(
+  showcases_rels,
+  ({ one }) => ({
+    parent: one(showcases, {
+      fields: [showcases_rels.parent],
+      references: [showcases.id],
+      relationName: "_rels",
+    }),
+    mediaID: one(media, {
+      fields: [showcases_rels.mediaID],
+      references: [media.id],
+      relationName: "media",
+    }),
+  }),
+);
+export const relations_showcases = relations(showcases, ({ many }) => ({
+  _locales: many(showcases_locales, {
+    relationName: "_locales",
+  }),
+  _rels: many(showcases_rels, {
+    relationName: "_rels",
   }),
 }));
 export const relations_categories_locales = relations(
@@ -1229,10 +1423,25 @@ export const relations_payload_locked_documents_rels = relations(
       references: [admins.id],
       relationName: "admins",
     }),
+    usersID: one(users, {
+      fields: [payload_locked_documents_rels.usersID],
+      references: [users.id],
+      relationName: "users",
+    }),
     postsID: one(posts, {
       fields: [payload_locked_documents_rels.postsID],
       references: [posts.id],
       relationName: "posts",
+    }),
+    pagesID: one(pages, {
+      fields: [payload_locked_documents_rels.pagesID],
+      references: [pages.id],
+      relationName: "pages",
+    }),
+    showcasesID: one(showcases, {
+      fields: [payload_locked_documents_rels.showcasesID],
+      references: [showcases.id],
+      relationName: "showcases",
     }),
     categoriesID: one(categories, {
       fields: [payload_locked_documents_rels.categoriesID],
@@ -1327,49 +1536,22 @@ export const relations_company_info = relations(
     }),
   }),
 );
-export const relations_manufacturing_locales = relations(
-  manufacturing_locales,
-  ({ one }) => ({
-    _parentID: one(manufacturing, {
-      fields: [manufacturing_locales._parentID],
-      references: [manufacturing.id],
-      relationName: "_locales",
-    }),
-  }),
-);
-export const relations_manufacturing_rels = relations(
-  manufacturing_rels,
-  ({ one }) => ({
-    parent: one(manufacturing, {
-      fields: [manufacturing_rels.parent],
-      references: [manufacturing.id],
-      relationName: "_rels",
-    }),
-    mediaID: one(media, {
-      fields: [manufacturing_rels.mediaID],
-      references: [media.id],
-      relationName: "media",
-    }),
-  }),
-);
-export const relations_manufacturing = relations(manufacturing, ({ many }) => ({
-  _locales: many(manufacturing_locales, {
-    relationName: "_locales",
-  }),
-  _rels: many(manufacturing_rels, {
-    relationName: "_rels",
-  }),
-}));
 
 type DatabaseSchema = {
   roles: typeof roles;
   roles_locales: typeof roles_locales;
   admins_sessions: typeof admins_sessions;
   admins: typeof admins;
+  users: typeof users;
   posts: typeof posts;
   posts_locales: typeof posts_locales;
   _posts_v: typeof _posts_v;
   _posts_v_locales: typeof _posts_v_locales;
+  pages: typeof pages;
+  pages_locales: typeof pages_locales;
+  showcases: typeof showcases;
+  showcases_locales: typeof showcases_locales;
+  showcases_rels: typeof showcases_rels;
   categories: typeof categories;
   categories_locales: typeof categories_locales;
   products: typeof products;
@@ -1390,17 +1572,20 @@ type DatabaseSchema = {
   company_info_social_media: typeof company_info_social_media;
   company_info: typeof company_info;
   company_info_locales: typeof company_info_locales;
-  manufacturing: typeof manufacturing;
-  manufacturing_locales: typeof manufacturing_locales;
-  manufacturing_rels: typeof manufacturing_rels;
   relations_roles_locales: typeof relations_roles_locales;
   relations_roles: typeof relations_roles;
   relations_admins_sessions: typeof relations_admins_sessions;
   relations_admins: typeof relations_admins;
+  relations_users: typeof relations_users;
   relations_posts_locales: typeof relations_posts_locales;
   relations_posts: typeof relations_posts;
   relations__posts_v_locales: typeof relations__posts_v_locales;
   relations__posts_v: typeof relations__posts_v;
+  relations_pages_locales: typeof relations_pages_locales;
+  relations_pages: typeof relations_pages;
+  relations_showcases_locales: typeof relations_showcases_locales;
+  relations_showcases_rels: typeof relations_showcases_rels;
+  relations_showcases: typeof relations_showcases;
   relations_categories_locales: typeof relations_categories_locales;
   relations_categories: typeof relations_categories;
   relations_products_locales: typeof relations_products_locales;
@@ -1421,9 +1606,6 @@ type DatabaseSchema = {
   relations_company_info_social_media: typeof relations_company_info_social_media;
   relations_company_info_locales: typeof relations_company_info_locales;
   relations_company_info: typeof relations_company_info;
-  relations_manufacturing_locales: typeof relations_manufacturing_locales;
-  relations_manufacturing_rels: typeof relations_manufacturing_rels;
-  relations_manufacturing: typeof relations_manufacturing;
 };
 
 declare module "@payloadcms/db-sqlite" {

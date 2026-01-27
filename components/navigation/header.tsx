@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CompanyInfo } from "@/types/payload-types";
-import { getMediaUrl } from "@/lib/media.utils";
+import { getMediaUrl } from "@/lib/media-utils";
 
 const navLinks = [
   { key: "home", href: "/" },

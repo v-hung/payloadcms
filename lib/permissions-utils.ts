@@ -4,7 +4,7 @@ import {
   RoleName,
   type PermissionAction,
   type PermissionCollection,
-} from "./permissions.config";
+} from "./permissions-config";
 
 /**
  * Check if user has permission for a specific action on a collection

@@ -3,19 +3,19 @@ import { createCollectionAccess } from "../lib/permissions-utils";
 import { createSlugHook } from "../lib/slug-utils";
 
 /**
- * Posts Collection Configuration
- * Manages blog posts and articles with multilingual content support
+ * Pages Collection Configuration
+ * Manages static pages with multilingual content support
  */
-export const Posts: CollectionConfig = {
-  slug: "posts",
+export const Pages: CollectionConfig = {
+  slug: "pages",
 
   // Access control based on granular permissions
-  access: createCollectionAccess("posts"),
+  access: createCollectionAccess("pages"),
 
   // Admin configuration
   admin: {
     useAsTitle: "title",
-    defaultColumns: ["title", "author", "status", "publishedAt", "updatedAt"],
+    defaultColumns: ["title", "slug", "status", "updatedAt"],
     group: {
       en: "Content",
       vi: "Nội dung",
@@ -24,8 +24,8 @@ export const Posts: CollectionConfig = {
 
   // Collection labels
   labels: {
-    singular: { en: "Post", vi: "Bài viết" },
-    plural: { en: "Posts", vi: "Bài viết" },
+    singular: { en: "Page", vi: "Trang" },
+    plural: { en: "Pages", vi: "Trang" },
   },
 
   // Fields definition
@@ -74,6 +74,7 @@ export const Posts: CollectionConfig = {
     {
       name: "excerpt",
       type: "textarea",
+      localized: true,
       label: { en: "Excerpt", vi: "Trích đoạn" },
       admin: {
         description: {
@@ -110,33 +111,18 @@ export const Posts: CollectionConfig = {
         },
       },
     },
-    {
-      name: "author",
-      type: "relationship",
-      relationTo: "admins",
-      required: true,
-      label: { en: "Author", vi: "Tác giả" },
-      defaultValue: ({ user }) => user?.id,
-      admin: {
-        position: "sidebar",
-        description: {
-          en: "Defaults to current user",
-          vi: "Mặc định là người dùng hiện tại",
-        },
-      },
-    },
 
     // Featured Settings
     {
       name: "featured",
       type: "checkbox",
       defaultValue: false,
-      label: { en: "Featured Post", vi: "Bài viết nổi bật" },
+      label: { en: "Featured Page", vi: "Trang nổi bật" },
       admin: {
         position: "sidebar",
         description: {
-          en: "Show on home page as featured post",
-          vi: "Hiển thị trên trang chủ dưới dạng bài viết nổi bật",
+          en: "Show on home page as featured page",
+          vi: "Hiển thị trên trang chủ dưới dạng trang nổi bật",
         },
       },
     },
@@ -149,8 +135,8 @@ export const Posts: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: {
-          en: "Sort order for featured posts on home page (lower numbers appear first)",
-          vi: "Thứ tự sắp xếp cho bài viết nổi bật trên trang chủ (số nhỏ hơn hiển thị trước)",
+          en: "Sort order for featured pages on home page (lower numbers appear first)",
+          vi: "Thứ tự sắp xếp cho trang nổi bật trên trang chủ (số nhỏ hơn hiển thị trước)",
         },
       },
     },
@@ -164,8 +150,8 @@ export const Posts: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: {
-          en: "Custom title for search engines (overrides post title)",
-          vi: "Tiêu đề tùy chỉnh cho công cụ tìm kiếm (ghi đè tiêu đề bài viết)",
+          en: "Custom title for search engines (overrides page title)",
+          vi: "Tiêu đề tùy chỉnh cho công cụ tìm kiếm (ghi đè tiêu đề trang)",
         },
       },
     },
@@ -194,33 +180,47 @@ export const Posts: CollectionConfig = {
       },
     },
 
-    // Taxonomy (commented out - add categories/tags collections first)
-    // {
-    //   name: "category",
-    //   type: "relationship",
-    //   relationTo: "categories",
-    //   label: { en: "Category", vi: "Danh mục" },
-    //   admin: {
-    //     position: "sidebar",
-    //   },
-    // },
-    // {
-    //   name: "tags",
-    //   type: "relationship",
-    //   relationTo: "tags",
-    //   hasMany: true,
-    //   label: { en: "Tags", vi: "Thẻ" },
-    //   admin: {
-    //     position: "sidebar",
-    //   },
-    // },
+    // Metadata
+    {
+      name: "createdAt",
+      type: "date",
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        date: {
+          pickerAppearance: "dayAndTime",
+        },
+      },
+      label: { en: "Created At", vi: "Ngày tạo" },
+      hooks: {
+        beforeChange: [
+          ({ value, operation }) => {
+            if (operation === "create" && !value) {
+              return new Date();
+            }
+            return value;
+          },
+        ],
+      },
+    },
+    {
+      name: "updatedAt",
+      type: "date",
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        date: {
+          pickerAppearance: "dayAndTime",
+        },
+      },
+      label: { en: "Updated At", vi: "Ngày cập nhật" },
+      hooks: {
+        beforeChange: [
+          () => {
+            return new Date();
+          },
+        ],
+      },
+    },
   ],
-
-  // Timestamps
-  timestamps: true,
-
-  // Versions
-  versions: {
-    drafts: true,
-  },
 };

@@ -111,7 +111,87 @@
 
 ---
 
-### 4. Contact Inquiries Collection (`contact-inquiries`)
+### 4. Pages Collection (`pages`)
+
+**Purpose**: Manage static pages with multilingual content support
+
+**Fields**:
+
+- `title` (text, localized, required) - Page title
+- `slug` (text, unique, indexed, required) - URL-friendly identifier, auto-generated from title
+- `content` (richText, localized, required) - Full page content with formatting
+- `excerpt` (textarea, localized) - Short summary for previews
+- `status` (select: draft/published/archived, default: draft) - Publication status
+- `publishedAt` (date) - Publication date
+- `featured` (checkbox, default: false) - Show on home page as featured page
+- `displayOrder` (number, default: 0) - Sort order for featured pages
+- `featuredImage` (upload) - Page featured image
+- `seoTitle` (text, localized) - Custom SEO title (overrides default)
+- `seoDescription` (textarea, localized) - Custom SEO meta description
+- `createdAt` (date, auto) - Creation timestamp
+- `updatedAt` (date, auto) - Last modified timestamp
+
+**Relationships**:
+
+- Can be featured on home page (filtered by `featured: true`)
+
+**Validation Rules**:
+
+- `title` required in both vi and en
+- `slug` must be unique across all pages
+- `content` required in both vi and en
+
+**Admin UI**:
+
+- Default columns: title, slug, status, updatedAt
+- Group: "Content" (vi: "Nội dung", en: "Content")
+- Use title as title field
+
+---
+
+### 5. Showcases Collection (`showcases`)
+
+**Purpose**: Manage showcase items (projects, case studies, achievements, partnerships, awards)
+
+**Fields**:
+
+- `title` (text, localized, required) - Showcase title
+- `slug` (text, unique, indexed, required) - URL-friendly identifier, auto-generated from title
+- `description` (richText, localized, required) - Full showcase description with formatting
+- `excerpt` (textarea, localized) - Short summary for previews
+- `category` (select: project/case-study/achievement/partnership/award/other, required) - Showcase category
+- `images` (upload, hasMany) - Showcase images (multiple images per showcase)
+- `status` (select: draft/published/archived, default: draft) - Publication status
+- `featured` (checkbox, default: false) - Show on home page as featured showcase
+- `displayOrder` (number, default: 0) - Sort order for display
+- `client` (text, localized) - Client or partner name (if applicable)
+- `date` (date) - Project/achievement date
+- `location` (text, localized) - Project/event location (if applicable)
+- `seoTitle` (text, localized) - Custom SEO title (overrides default)
+- `seoDescription` (textarea, localized) - Custom SEO meta description
+- `createdAt` (date, auto) - Creation timestamp
+- `updatedAt` (date, auto) - Last modified timestamp
+
+**Relationships**:
+
+- Can be featured on home page (filtered by `featured: true`)
+
+**Validation Rules**:
+
+- `title` required in both vi and en
+- `slug` must be unique across all showcases
+- `description` required in both vi and en
+- `category` required
+
+**Admin UI**:
+
+- Default columns: title, category, featured, status, updatedAt
+- Group: "Content" (vi: "Nội dung", en: "Content")
+- Use title as title field
+
+---
+
+### 6. Contact Inquiries Collection (`contact-inquiries`)
 
 **Purpose**: Store contact form submissions from website visitors
 
@@ -173,30 +253,6 @@
 
 ---
 
-### 2. Manufacturing Capability Global (`manufacturing`)
-
-**Purpose**: Store manufacturing facility information and capabilities
-
-**Fields**:
-
-- `headline` (text, localized, required) - Section headline
-- `description` (richText, localized, required) - Overview of manufacturing capabilities
-- `factorySize` (text, localized) - Factory size (e.g., "50,000 sqm")
-- `productionCapacity` (text, localized) - Monthly/annual production capacity
-- `certifications` (richText, localized) - Quality certifications and standards
-- `processes` (richText, localized) - Manufacturing processes description
-- `leadTimes` (text, localized) - Typical order lead times
-- `images` (upload, hasMany) - Factory photos and process documentation
-- `seoTitle` (text, localized) - Custom SEO title
-- `seoDescription` (textarea, localized) - Custom SEO meta description
-
-**Admin UI**:
-
-- Group: "Content"
-- Label: "Manufacturing Capability" (vi: "Năng lực sản xuất", en: "Manufacturing Capability")
-
----
-
 ## Relationships Diagram
 
 ```
@@ -216,16 +272,20 @@
 └─────────────────┘     searchable
 
 ┌─────────────────┐
+│      Pages      │◄─── featured filter for home page
+└─────────────────┘
+
+┌─────────────────┐
+│   Showcases     │◄─── featured filter for home page
+└─────────────────┘     category-based filtering
+
+┌─────────────────┐
 │ Contact         │
 │ Inquiries       │ (independent, stores form submissions)
 └─────────────────┘
 
 ┌─────────────────┐
 │ Company Info    │ (global singleton)
-└─────────────────┘
-
-┌─────────────────┐
-│ Manufacturing   │ (global singleton)
 └─────────────────┘
 ```
 
@@ -245,10 +305,26 @@ draft → published → archived
 new → in-progress → responded → closed
 ```
 
-### Post Status Flow (existing)
+### Post Status Flow
 
 ```
 draft → published → archived
+```
+
+### Page Status Flow
+
+```
+draft → published → archived
+  ↑         ↓
+  └─────────┘ (can revert published back to draft)
+```
+
+### Showcase Status Flow
+
+```
+draft → published → archived
+  ↑         ↓
+  └─────────┘ (can revert published back to draft)
 ```
 
 ## Indexing Strategy
@@ -262,6 +338,11 @@ draft → published → archived
 - `categories.displayOrder` (index) - Sorted category listings
 - `posts.slug` (unique index) - Article detail page lookups
 - `posts.featured` (index) - Home page featured posts query
+- `pages.slug` (unique index) - Page detail lookups
+- `pages.featured` (index) - Home page featured pages query
+- `showcases.slug` (unique index) - Showcase detail page lookups
+- `showcases.featured` (index) - Home page featured showcases query
+- `showcases.category` (index) - Filter showcases by category
 - `contact-inquiries.status` (index) - Admin filtering by status
 - `contact-inquiries.submittedAt` (index) - Chronological sorting
 
@@ -275,6 +356,8 @@ draft → published → archived
 
 **New Collections/Globals**:
 
-- All others are new and will be created from scratch
+- `pages` collection - New, will be created from scratch
+- `showcases` collection - New, will be created from scratch
+- `manufacturing` global - REMOVED (no longer needed)
 - No data migration required for initial launch
 - Seed data for categories and sample products recommended for demo purposes

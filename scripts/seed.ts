@@ -1,5 +1,5 @@
 import type { Payload } from "payload";
-import { ROLE_PERMISSIONS_CONFIG } from "../lib/permissions.config";
+import { ROLE_PERMISSIONS_CONFIG } from "../lib/permissions-config";
 
 interface RoleSeed {
   slug: string;

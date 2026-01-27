@@ -13,16 +13,19 @@ import { vi } from "@payloadcms/translations/languages/vi";
 import localization from "./i18n/localization";
 
 import { Posts } from "./collections/post";
+import { Pages } from "./collections/pages";
+import { Showcases } from "./collections/showcases";
 import { Categories } from "./collections/categories";
 import { Products } from "./collections/products";
 import { ContactInquiries } from "./collections/contact-inquiries";
 import { Media } from "./collections/media";
 import { Admin } from "./collections/admin";
 import { Roles } from "./collections/roles";
+import { Users } from "./collections/users";
 
 import { CompanyInfo } from "./globals/company-info";
-import { Manufacturing } from "./globals/manufacturing";
-import { lexicalEditorConfig } from "./lib/lexicalEditor-utils";
+import { lexicalEditorConfig } from "./lib/lexical-editor-utils";
+import { payloadTranslations } from "./i18n/payload-translations";
 
 export default buildConfig({
   // Rich Text Editor
@@ -32,7 +35,10 @@ export default buildConfig({
   collections: [
     Roles,
     Admin,
+    Users,
     Posts,
+    Pages,
+    Showcases,
     Categories,
     Products,
     ContactInquiries,
@@ -40,12 +46,13 @@ export default buildConfig({
   ],
 
   // Globals
-  globals: [CompanyInfo, Manufacturing],
+  globals: [CompanyInfo],
 
   // i18n - Admin UI language
   i18n: {
     fallbackLanguage: "vi",
     supportedLanguages: { vi, en },
+    translations: payloadTranslations,
   },
 
   // Localization - Content multilingual support
@@ -75,7 +82,9 @@ export default buildConfig({
 
   // Seed script to populate initial data
   onInit: async (payload) => {
-    await import("./scripts/seed").then(({ seed }) => seed(payload));
+    if (process.env.NODE_ENV === "development") {
+      await import("./scripts/seed").then(({ seed }) => seed(payload));
+    }
   },
 
   // If you want to resize images, crop, set focal point, etc.

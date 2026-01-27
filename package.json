@@ -9,7 +9,7 @@
 		"start": "next start",
 		"lint": "eslint",
 		"payload": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload",
-		"seed": "tsx ./scripts/seed.ts"
+		"seed": "tsx --env-file=.env ./scripts/run-seed.ts"
 	},
 	"dependencies": {
 		"@payloadcms/db-sqlite": "^3.72.0",
@@ -41,6 +41,7 @@
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
 		"cross-env": "^10.1.0",
+		"dotenv": "^17.2.3",
 		"eslint": "^9",
 		"eslint-config-next": "16.1.4",
 		"tailwindcss": "^4",
