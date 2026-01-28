@@ -2,7 +2,7 @@
 
 import { useRowLabel } from "@payloadcms/ui";
 
-export const VariantRowLabel = () => {
+const ProductVariantRowLabel = () => {
   const { data } = useRowLabel<{ title?: string }>();
 
   const label = data?.title || "New Variant";
@@ -13,3 +13,5 @@ export const VariantRowLabel = () => {
     </div>
   );
 };
+
+export default ProductVariantRowLabel;

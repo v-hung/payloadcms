@@ -96,6 +96,10 @@ export const Products: CollectionConfig = {
           vi: '1️⃣ Đầu tiên, thêm tùy chọn như Màu sắc, Kích thước, Chất liệu. Sau đó nhấn nút "Tạo biến thể" bên dưới.',
         },
         initCollapsed: false,
+        components: {
+          // Field: "@/components/admin/ProductOptionsField#ProductOptionsField",
+          RowLabel: "@/components/admin/ProductOptionRowLabel",
+        },
       },
       fields: [
         {
@@ -157,8 +161,10 @@ export const Products: CollectionConfig = {
           vi: "2️⃣ Biến thể được tự động tạo từ các tùy chọn bên trên. Cập nhật giá, SKU và tồn kho cho từng biến thể.",
         },
         initCollapsed: false,
+        isSortable: false,
         components: {
-          RowLabel: "@/components/admin/VariantRowLabel#VariantRowLabel",
+          Field: "@/components/admin/ProductVariantsFieldAutoGenerate",
+          RowLabel: "@/components/admin/ProductVariantRowLabel",
         },
       },
       fields: [
@@ -193,30 +199,14 @@ export const Products: CollectionConfig = {
           },
           fields: [
             {
-              name: "option",
+              name: "optionId",
               type: "text",
               required: true,
-              localized: true,
-              label: { en: "Option Name", vi: "Tên tùy chọn" },
-              admin: {
-                description: {
-                  en: "Option name (e.g., Color)",
-                  vi: "Tên tùy chọn (ví dụ: Màu sắc)",
-                },
-              },
             },
             {
-              name: "value",
+              name: "optionValueId",
               type: "text",
               required: true,
-              localized: true,
-              label: { en: "Option Value", vi: "Giá trị tùy chọn" },
-              admin: {
-                description: {
-                  en: "Option value (e.g., Red)",
-                  vi: "Giá trị tùy chọn (ví dụ: Đỏ)",
-                },
-              },
             },
           ],
         },
@@ -508,4 +498,26 @@ export const Products: CollectionConfig = {
   versions: {
     drafts: true,
   },
+
+  // hooks: {
+  //   beforeChange: [
+  //     async ({ data, operation, req }) => {
+  //       // Chỉ auto-generate khi create hoặc khi options thay đổi
+  //       if (data.options && data.options.length > 0) {
+  //         // Check nếu chưa có variants hoặc options đã thay đổi
+  //         const shouldRegenerate = !data.variants || data.variants.length === 0;
+
+  //         if (shouldRegenerate) {
+  //           req.payload.logger.info("🔄 Generating variants from options...");
+  //           data.variants = generateVariantsFromOptions(data.options);
+  //           req.payload.logger.info(
+  //             `✅ Generated ${data.variants.length} variants`,
+  //           );
+  //         }
+  //       }
+
+  //       return data;
+  //     },
+  //   ],
+  // },
 };

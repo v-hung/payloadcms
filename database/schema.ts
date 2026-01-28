@@ -37,8 +37,8 @@ export const roles_permissions = sqliteTable(
         "orders",
       ],
     }).notNull(),
-    create: integer("create", { mode: "boolean" }).default(false),
     view: integer("view", { mode: "boolean" }).default(false),
+    create: integer("create", { mode: "boolean" }).default(false),
     update: integer("update", { mode: "boolean" }).default(false),
     delete: integer("delete", { mode: "boolean" }).default(false),
   },
@@ -628,6 +628,8 @@ export const products_variants_selected_options = sqliteTable(
     _order: integer("_order").notNull(),
     _parentID: text("_parent_id").notNull(),
     id: text("id").primaryKey(),
+    optionId: text("option_id"),
+    optionValueId: text("option_value_id"),
   },
   (columns) => [
     index("products_variants_selected_options_order_idx").on(columns._order),
@@ -638,27 +640,6 @@ export const products_variants_selected_options = sqliteTable(
       columns: [columns["_parentID"]],
       foreignColumns: [products_variants.id],
       name: "products_variants_selected_options_parent_id_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
-export const products_variants_selected_options_locales = sqliteTable(
-  "products_variants_selected_options_locales",
-  {
-    option: text("option"),
-    value: text("value"),
-    id: integer("id").primaryKey(),
-    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
-    _parentID: text("_parent_id").notNull(),
-  },
-  (columns) => [
-    uniqueIndex(
-      "products_variants_selected_options_locales_locale_parent_id_",
-    ).on(columns._locale, columns._parentID),
-    foreignKey({
-      columns: [columns["_parentID"]],
-      foreignColumns: [products_variants_selected_options.id],
-      name: "products_variants_selected_options_locales_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -774,29 +755,29 @@ export const products_rels = sqliteTable(
     order: integer("order"),
     parent: integer("parent_id").notNull(),
     path: text("path").notNull(),
-    categoriesID: integer("categories_id"),
     mediaID: integer("media_id"),
+    categoriesID: integer("categories_id"),
   },
   (columns) => [
     index("products_rels_order_idx").on(columns.order),
     index("products_rels_parent_idx").on(columns.parent),
     index("products_rels_path_idx").on(columns.path),
-    index("products_rels_categories_id_idx").on(columns.categoriesID),
     index("products_rels_media_id_idx").on(columns.mediaID),
+    index("products_rels_categories_id_idx").on(columns.categoriesID),
     foreignKey({
       columns: [columns["parent"]],
       foreignColumns: [products.id],
       name: "products_rels_parent_fk",
     }).onDelete("cascade"),
     foreignKey({
-      columns: [columns["categoriesID"]],
-      foreignColumns: [categories.id],
-      name: "products_rels_categories_fk",
-    }).onDelete("cascade"),
-    foreignKey({
       columns: [columns["mediaID"]],
       foreignColumns: [media.id],
       name: "products_rels_media_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["categoriesID"]],
+      foreignColumns: [categories.id],
+      name: "products_rels_categories_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -887,6 +868,8 @@ export const _products_v_version_variants_selected_options = sqliteTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: integer("id").primaryKey(),
+    optionId: text("option_id"),
+    optionValueId: text("option_value_id"),
     _uuid: text("_uuid"),
   },
   (columns) => [
@@ -903,28 +886,6 @@ export const _products_v_version_variants_selected_options = sqliteTable(
     }).onDelete("cascade"),
   ],
 );
-
-export const _products_v_version_variants_selected_options_locales =
-  sqliteTable(
-    "_products_v_version_variants_selected_options_locales",
-    {
-      option: text("option"),
-      value: text("value"),
-      id: integer("id").primaryKey(),
-      _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
-      _parentID: integer("_parent_id").notNull(),
-    },
-    (columns) => [
-      uniqueIndex(
-        "_products_v_version_variants_selected_options_locales_locale",
-      ).on(columns._locale, columns._parentID),
-      foreignKey({
-        columns: [columns["_parentID"]],
-        foreignColumns: [_products_v_version_variants_selected_options.id],
-        name: "_products_v_version_variants_selected_options_locales_par_fk",
-      }).onDelete("cascade"),
-    ],
-  );
 
 export const _products_v_version_variants = sqliteTable(
   "_products_v_version_variants",
@@ -1071,29 +1032,29 @@ export const _products_v_rels = sqliteTable(
     order: integer("order"),
     parent: integer("parent_id").notNull(),
     path: text("path").notNull(),
-    categoriesID: integer("categories_id"),
     mediaID: integer("media_id"),
+    categoriesID: integer("categories_id"),
   },
   (columns) => [
     index("_products_v_rels_order_idx").on(columns.order),
     index("_products_v_rels_parent_idx").on(columns.parent),
     index("_products_v_rels_path_idx").on(columns.path),
-    index("_products_v_rels_categories_id_idx").on(columns.categoriesID),
     index("_products_v_rels_media_id_idx").on(columns.mediaID),
+    index("_products_v_rels_categories_id_idx").on(columns.categoriesID),
     foreignKey({
       columns: [columns["parent"]],
       foreignColumns: [_products_v.id],
       name: "_products_v_rels_parent_fk",
     }).onDelete("cascade"),
     foreignKey({
-      columns: [columns["categoriesID"]],
-      foreignColumns: [categories.id],
-      name: "_products_v_rels_categories_fk",
-    }).onDelete("cascade"),
-    foreignKey({
       columns: [columns["mediaID"]],
       foreignColumns: [media.id],
       name: "_products_v_rels_media_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["categoriesID"]],
+      foreignColumns: [categories.id],
+      name: "_products_v_rels_categories_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -1975,26 +1936,13 @@ export const relations_products_options = relations(
     }),
   }),
 );
-export const relations_products_variants_selected_options_locales = relations(
-  products_variants_selected_options_locales,
-  ({ one }) => ({
-    _parentID: one(products_variants_selected_options, {
-      fields: [products_variants_selected_options_locales._parentID],
-      references: [products_variants_selected_options.id],
-      relationName: "_locales",
-    }),
-  }),
-);
 export const relations_products_variants_selected_options = relations(
   products_variants_selected_options,
-  ({ one, many }) => ({
+  ({ one }) => ({
     _parentID: one(products_variants, {
       fields: [products_variants_selected_options._parentID],
       references: [products_variants.id],
       relationName: "selectedOptions",
-    }),
-    _locales: many(products_variants_selected_options_locales, {
-      relationName: "_locales",
     }),
   }),
 );
@@ -2045,15 +1993,15 @@ export const relations_products_rels = relations(products_rels, ({ one }) => ({
     references: [products.id],
     relationName: "_rels",
   }),
-  categoriesID: one(categories, {
-    fields: [products_rels.categoriesID],
-    references: [categories.id],
-    relationName: "categories",
-  }),
   mediaID: one(media, {
     fields: [products_rels.mediaID],
     references: [media.id],
     relationName: "media",
+  }),
+  categoriesID: one(categories, {
+    fields: [products_rels.categoriesID],
+    references: [categories.id],
+    relationName: "categories",
   }),
 }));
 export const relations_products = relations(products, ({ many }) => ({
@@ -2119,28 +2067,12 @@ export const relations__products_v_version_options = relations(
     }),
   }),
 );
-export const relations__products_v_version_variants_selected_options_locales =
-  relations(
-    _products_v_version_variants_selected_options_locales,
-    ({ one }) => ({
-      _parentID: one(_products_v_version_variants_selected_options, {
-        fields: [
-          _products_v_version_variants_selected_options_locales._parentID,
-        ],
-        references: [_products_v_version_variants_selected_options.id],
-        relationName: "_locales",
-      }),
-    }),
-  );
 export const relations__products_v_version_variants_selected_options =
-  relations(_products_v_version_variants_selected_options, ({ one, many }) => ({
+  relations(_products_v_version_variants_selected_options, ({ one }) => ({
     _parentID: one(_products_v_version_variants, {
       fields: [_products_v_version_variants_selected_options._parentID],
       references: [_products_v_version_variants.id],
       relationName: "selectedOptions",
-    }),
-    _locales: many(_products_v_version_variants_selected_options_locales, {
-      relationName: "_locales",
     }),
   }));
 export const relations__products_v_version_variants_locales = relations(
@@ -2192,15 +2124,15 @@ export const relations__products_v_rels = relations(
       references: [_products_v.id],
       relationName: "_rels",
     }),
-    categoriesID: one(categories, {
-      fields: [_products_v_rels.categoriesID],
-      references: [categories.id],
-      relationName: "categories",
-    }),
     mediaID: one(media, {
       fields: [_products_v_rels.mediaID],
       references: [media.id],
       relationName: "media",
+    }),
+    categoriesID: one(categories, {
+      fields: [_products_v_rels.categoriesID],
+      references: [categories.id],
+      relationName: "categories",
     }),
   }),
 );
@@ -2489,7 +2421,6 @@ type DatabaseSchema = {
   products_options: typeof products_options;
   products_options_locales: typeof products_options_locales;
   products_variants_selected_options: typeof products_variants_selected_options;
-  products_variants_selected_options_locales: typeof products_variants_selected_options_locales;
   products_variants: typeof products_variants;
   products_variants_locales: typeof products_variants_locales;
   products: typeof products;
@@ -2500,7 +2431,6 @@ type DatabaseSchema = {
   _products_v_version_options: typeof _products_v_version_options;
   _products_v_version_options_locales: typeof _products_v_version_options_locales;
   _products_v_version_variants_selected_options: typeof _products_v_version_variants_selected_options;
-  _products_v_version_variants_selected_options_locales: typeof _products_v_version_variants_selected_options_locales;
   _products_v_version_variants: typeof _products_v_version_variants;
   _products_v_version_variants_locales: typeof _products_v_version_variants_locales;
   _products_v: typeof _products_v;
@@ -2545,7 +2475,6 @@ type DatabaseSchema = {
   relations_products_options_values: typeof relations_products_options_values;
   relations_products_options_locales: typeof relations_products_options_locales;
   relations_products_options: typeof relations_products_options;
-  relations_products_variants_selected_options_locales: typeof relations_products_variants_selected_options_locales;
   relations_products_variants_selected_options: typeof relations_products_variants_selected_options;
   relations_products_variants_locales: typeof relations_products_variants_locales;
   relations_products_variants: typeof relations_products_variants;
@@ -2556,7 +2485,6 @@ type DatabaseSchema = {
   relations__products_v_version_options_values: typeof relations__products_v_version_options_values;
   relations__products_v_version_options_locales: typeof relations__products_v_version_options_locales;
   relations__products_v_version_options: typeof relations__products_v_version_options;
-  relations__products_v_version_variants_selected_options_locales: typeof relations__products_v_version_variants_selected_options_locales;
   relations__products_v_version_variants_selected_options: typeof relations__products_v_version_variants_selected_options;
   relations__products_v_version_variants_locales: typeof relations__products_v_version_variants_locales;
   relations__products_v_version_variants: typeof relations__products_v_version_variants;

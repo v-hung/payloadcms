@@ -573,14 +573,8 @@ export interface Product {
          * Selected option values for this variant
          */
         selectedOptions: {
-          /**
-           * Option name (e.g., Color)
-           */
-          option: string;
-          /**
-           * Option value (e.g., Red)
-           */
-          value: string;
+          optionId: string;
+          optionValueId: string;
           id?: string | null;
         }[];
         /**
@@ -1267,8 +1261,8 @@ export interface ProductsSelect<T extends boolean = true> {
         selectedOptions?:
           | T
           | {
-              option?: T;
-              value?: T;
+              optionId?: T;
+              optionValueId?: T;
               id?: T;
             };
         price?: T;

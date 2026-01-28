@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { generatePermissionFields } from "@/lib/permissions-fields";
+import { createSlugHook } from "@/lib/slug-utils";
 
 /**
  * Roles Collection Configuration
@@ -72,25 +73,15 @@ export const Roles: CollectionConfig = {
           en: "Unique identifier for the role (lowercase, no spaces)",
           vi: "Mã định danh duy nhất cho vai trò (chữ thường, không dấu cách)",
         },
+        components: {
+          Field: {
+            path: "@/components/admin/SlugField",
+            clientProps: { sourceField: "name" },
+          },
+        },
       },
       hooks: {
-        beforeValidate: [
-          ({ value, data }) => {
-            if (!value && data?.name) {
-              const nameValue =
-                typeof data.name === "object"
-                  ? data.name.en || data.name.vi
-                  : data.name;
-              return nameValue
-                ?.toLowerCase()
-                .replace(/[^\w\s-]/g, "")
-                .replace(/\s+/g, "-")
-                .replace(/--+/g, "-")
-                .trim();
-            }
-            return value;
-          },
-        ],
+        beforeValidate: [createSlugHook("name")],
       },
     },
     {
