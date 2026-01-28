@@ -27,9 +27,14 @@ export const hasPermission = (
   // Super admin always has full permissions
   if (role.slug === "super-admin") return true;
 
-  // Check permissions directly from role
-  if (role.permissions?.[collection]?.[action]) {
-    return role.permissions[collection][action];
+  // Check permissions from role (array format)
+  if (role.permissions && Array.isArray(role.permissions)) {
+    const permissionEntry = role.permissions.find(
+      (p) => p.collection === collection,
+    );
+    if (permissionEntry && permissionEntry[action] === true) {
+      return true;
+    }
   }
 
   // Fallback to default config if permissions are not set

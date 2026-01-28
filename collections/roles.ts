@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { generatePermissionFields } from "../lib/permissions-fields";
+import { generatePermissionFields } from "@/lib/permissions-fields";
 
 /**
  * Roles Collection Configuration
@@ -136,15 +136,33 @@ export const Roles: CollectionConfig = {
     // Permissions - Group fields cho từng collection
     {
       name: "permissions",
-      type: "group",
+      type: "array",
       label: { en: "Permissions", vi: "Phân quyền" },
       admin: {
         description: {
           en: "Define what this role can do in each collection",
           vi: "Định nghĩa vai trò này có thể làm gì trong từng collection",
         },
+        initCollapsed: false,
+        components: {
+          RowLabel:
+            "@/components/admin/PermissionsRowLabel#PermissionsRowLabel",
+        },
       },
       fields: generatePermissionFields(),
+      validate: (value) => {
+        if (!value || !Array.isArray(value)) return true;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const collections = value.map((p: any) => p.collection).filter(Boolean);
+        const uniqueCollections = new Set(collections);
+
+        if (collections.length !== uniqueCollections.size) {
+          return "Each collection can only have one permission entry";
+        }
+
+        return true;
+      },
     },
   ],
 

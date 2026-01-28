@@ -11,8 +11,15 @@ export const Users: CollectionConfig = {
 
   // Admin configuration
   admin: {
-    useAsTitle: "name",
-    defaultColumns: ["name", "phone", "status", "verified", "createdAt"],
+    useAsTitle: "email",
+    defaultColumns: [
+      "email",
+      "name",
+      "phone",
+      "status",
+      "verified",
+      "createdAt",
+    ],
     group: {
       en: "User Management",
       vi: "Quản lý người dùng",
@@ -36,6 +43,12 @@ export const Users: CollectionConfig = {
       type: "text",
       required: true,
       label: { en: "Full Name", vi: "Họ và tên" },
+    },
+    {
+      name: "email",
+      type: "text",
+      required: true,
+      label: { en: "Email", vi: "Email" },
     },
 
     // Contact Information

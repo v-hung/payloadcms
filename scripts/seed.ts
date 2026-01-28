@@ -59,6 +59,18 @@ export const seed = async (payload: Payload): Promise<void> => {
       payload.logger.info(`Creating role: ${roleData.slug}...`);
 
       // Create English version (default)
+      // Convert permissions from object format to array format
+      const permissionsConfig =
+        ROLE_PERMISSIONS_CONFIG[
+          roleData.slug as keyof typeof ROLE_PERMISSIONS_CONFIG
+        ];
+      const permissionsArray = Object.entries(permissionsConfig).map(
+        ([collection, actions]) => ({
+          collection: collection as "users" | "posts" | "pages" | "showcases" | "categories" | "products" | "carts" | "orders" | "media",
+          ...(actions as Record<string, boolean>),
+        }),
+      );
+
       const newRole = await payload.create({
         collection: "roles",
         data: {
@@ -67,10 +79,7 @@ export const seed = async (payload: Payload): Promise<void> => {
           description: roleData.en.description,
           isSystem: true,
           displayOrder: roleData.displayOrder,
-          permissions:
-            ROLE_PERMISSIONS_CONFIG[
-              roleData.slug as keyof typeof ROLE_PERMISSIONS_CONFIG
-            ],
+          permissions: permissionsArray,
         },
         locale: "en",
       });

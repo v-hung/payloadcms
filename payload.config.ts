@@ -17,6 +17,11 @@ import { Pages } from "./collections/pages";
 import { Showcases } from "./collections/showcases";
 import { Categories } from "./collections/categories";
 import { Products } from "./collections/products";
+import { Carts } from "./collections/carts";
+import { CartItems } from "./collections/cart-items";
+import { Orders } from "./collections/orders";
+import { OrderItems } from "./collections/order-items";
+import { Wishlists } from "./collections/wishlists";
 import { ContactInquiries } from "./collections/contact-inquiries";
 import { Media } from "./collections/media";
 import { Admin } from "./collections/admin";
@@ -41,6 +46,11 @@ export default buildConfig({
     Showcases,
     Categories,
     Products,
+    Carts,
+    CartItems,
+    Orders,
+    OrderItems,
+    Wishlists,
     ContactInquiries,
     Media,
   ],

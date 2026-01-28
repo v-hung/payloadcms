@@ -70,6 +70,269 @@ export const Products: CollectionConfig = {
       },
     },
 
+    // Media
+    {
+      name: "images",
+      type: "upload",
+      relationTo: "media",
+      hasMany: true,
+      label: { en: "Images", vi: "Hình ảnh" },
+      admin: {
+        description: {
+          en: "Product photos (multiple images supported)",
+          vi: "Ảnh sản phẩm (hỗ trợ nhiều ảnh)",
+        },
+      },
+    },
+
+    // options
+    {
+      name: "options",
+      type: "array",
+      label: { en: "Product Options", vi: "Tùy chọn sản phẩm" },
+      admin: {
+        description: {
+          en: '1️⃣ First, add options like Color, Size, Material. Then click "Generate Variants" button below.',
+          vi: '1️⃣ Đầu tiên, thêm tùy chọn như Màu sắc, Kích thước, Chất liệu. Sau đó nhấn nút "Tạo biến thể" bên dưới.',
+        },
+        initCollapsed: false,
+      },
+      fields: [
+        {
+          name: "name",
+          type: "text",
+          required: true,
+          localized: true,
+          label: { en: "Option Name", vi: "Tên tùy chọn" },
+          admin: {
+            placeholder: {
+              en: "e.g., Color, Size, Material",
+              vi: "ví dụ: Màu sắc, Kích thước, Chất liệu",
+            },
+            description: {
+              en: "Option name (e.g., Color)",
+              vi: "Tên tùy chọn (ví dụ: Màu sắc)",
+            },
+          },
+        },
+        {
+          name: "values",
+          type: "array",
+          required: true,
+          minRows: 1,
+          label: { en: "Option Values", vi: "Giá trị tùy chọn" },
+          admin: {
+            description: {
+              en: "Add option values here",
+              vi: "Thêm các giá trị tùy chọn ở đây",
+            },
+          },
+          fields: [
+            {
+              name: "label",
+              type: "text",
+              required: true,
+              localized: true,
+              label: { en: "Value Label", vi: "Nhãn giá trị" },
+              admin: {
+                placeholder: {
+                  en: "e.g., Red, Small, Cotton",
+                  vi: "ví dụ: Đỏ, Nhỏ, Cotton",
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+
+    // variants
+    {
+      name: "variants",
+      type: "array",
+      label: { en: "Product Variants", vi: "Biến thể sản phẩm" },
+      admin: {
+        description: {
+          en: "2️⃣ Variants are auto-generated from options above. Update price, SKU, and inventory for each variant.",
+          vi: "2️⃣ Biến thể được tự động tạo từ các tùy chọn bên trên. Cập nhật giá, SKU và tồn kho cho từng biến thể.",
+        },
+        initCollapsed: false,
+        components: {
+          RowLabel: "@/components/admin/VariantRowLabel#VariantRowLabel",
+        },
+      },
+      fields: [
+        // VARIANT TITLE (Auto-generated, read-only)
+        {
+          name: "title",
+          type: "text",
+          required: true,
+          localized: true,
+          label: { en: "Variant Title", vi: "Tiêu đề biến thể" },
+          admin: {
+            readOnly: true,
+            description: {
+              en: '✅ Auto-generated from selected options (e.g., "Red / Small")',
+              vi: '✅ Tự động tạo từ các tùy chọn đã chọn (ví dụ: "Đỏ / Nhỏ")',
+            },
+          },
+        },
+
+        // SELECTED OPTIONS (Auto-generated from parent options)
+        {
+          name: "selectedOptions",
+          type: "array",
+          required: true,
+          label: { en: "Selected Options", vi: "Tùy chọn đã chọn" },
+          admin: {
+            readOnly: true,
+            description: {
+              en: "Selected option values for this variant",
+              vi: "Giá trị tùy chọn đã chọn cho biến thể này",
+            },
+          },
+          fields: [
+            {
+              name: "option",
+              type: "text",
+              required: true,
+              localized: true,
+              label: { en: "Option Name", vi: "Tên tùy chọn" },
+              admin: {
+                description: {
+                  en: "Option name (e.g., Color)",
+                  vi: "Tên tùy chọn (ví dụ: Màu sắc)",
+                },
+              },
+            },
+            {
+              name: "value",
+              type: "text",
+              required: true,
+              localized: true,
+              label: { en: "Option Value", vi: "Giá trị tùy chọn" },
+              admin: {
+                description: {
+                  en: "Option value (e.g., Red)",
+                  vi: "Giá trị tùy chọn (ví dụ: Đỏ)",
+                },
+              },
+            },
+          ],
+        },
+
+        // PRICING
+        {
+          type: "row",
+          fields: [
+            {
+              name: "price",
+              type: "number",
+              required: true,
+              defaultValue: 0,
+              min: 0,
+              label: { en: "Price", vi: "Giá" },
+              admin: {
+                width: "50%",
+                description: {
+                  en: "Selling price",
+                  vi: "Giá bán",
+                },
+              },
+            },
+            {
+              name: "compareAtPrice",
+              type: "number",
+              min: 0,
+              label: { en: "Compare at Price", vi: "Giá so sánh" },
+              admin: {
+                width: "50%",
+                description: {
+                  en: "Original price (for discounts)",
+                  vi: "Giá gốc (cho giảm giá)",
+                },
+              },
+            },
+          ],
+        },
+
+        // SKU & BARCODE
+        {
+          type: "row",
+          fields: [
+            {
+              name: "sku",
+              type: "text",
+              label: { en: "SKU", vi: "Mã SKU" },
+              admin: {
+                width: "50%",
+                description: {
+                  en: "Stock Keeping Unit",
+                  vi: "Mã quản lý hàng hóa",
+                },
+                placeholder: {
+                  en: "e.g., TS-RED-SM-001",
+                  vi: "ví dụ: TS-RED-SM-001",
+                },
+              },
+            },
+            {
+              name: "barcode",
+              type: "text",
+              label: { en: "Barcode", vi: "Mã vạch" },
+              admin: {
+                width: "50%",
+                description: {
+                  en: "Barcode (ISBN, UPC, GTIN, etc.)",
+                  vi: "Mã vạch (ISBN, UPC, GTIN, v.v.)",
+                },
+              },
+            },
+          ],
+        },
+
+        // INVENTORY
+        {
+          name: "inventory",
+          type: "number",
+          required: true,
+          defaultValue: 0,
+          min: 0,
+          label: { en: "Inventory", vi: "Tồn kho" },
+          admin: {
+            description: {
+              en: "Available quantity",
+              vi: "Số lượng có sẵn",
+            },
+          },
+        },
+
+        // VARIANT IMAGE
+        {
+          name: "image",
+          type: "upload",
+          relationTo: "media",
+          label: { en: "Variant Image", vi: "Hình ảnh biến thể" },
+          admin: {
+            description: {
+              en: "Specific image for this variant (optional)",
+              vi: "Hình ảnh riêng cho biến thể này (tùy chọn)",
+            },
+          },
+        },
+
+        // AVAILABILITY
+        {
+          name: "available",
+          type: "checkbox",
+          defaultValue: true,
+          admin: {
+            description: "Make this variant available for purchase",
+          },
+        },
+      ],
+    },
+
     // Content
     {
       name: "description",
@@ -146,21 +409,6 @@ export const Products: CollectionConfig = {
         description: {
           en: "Select one or more categories for this product",
           vi: "Chọn một hoặc nhiều danh mục cho sản phẩm này",
-        },
-      },
-    },
-
-    // Media
-    {
-      name: "images",
-      type: "upload",
-      relationTo: "media",
-      hasMany: true,
-      label: { en: "Images", vi: "Hình ảnh" },
-      admin: {
-        description: {
-          en: "Product photos (multiple images supported)",
-          vi: "Ảnh sản phẩm (hỗ trợ nhiều ảnh)",
         },
       },
     },

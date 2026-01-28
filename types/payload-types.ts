@@ -75,6 +75,11 @@ export interface Config {
     showcases: Showcase;
     categories: Category;
     products: Product;
+    carts: Cart;
+    'cart-items': CartItem;
+    orders: Order;
+    'order-items': OrderItem;
+    wishlists: Wishlist;
     'contact-inquiries': ContactInquiry;
     media: Media;
     'payload-kv': PayloadKv;
@@ -92,6 +97,11 @@ export interface Config {
     showcases: ShowcasesSelect<false> | ShowcasesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    carts: CartsSelect<false> | CartsSelect<true>;
+    'cart-items': CartItemsSelect<false> | CartItemsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
+    'order-items': OrderItemsSelect<false> | OrderItemsSelect<true>;
+    wishlists: WishlistsSelect<false> | WishlistsSelect<true>;
     'contact-inquiries': ContactInquiriesSelect<false> | ContactInquiriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -165,38 +175,25 @@ export interface Role {
   /**
    * Define what this role can do in each collection
    */
-  permissions?: {
-    posts?: {
-      view?: boolean | null;
-      create?: boolean | null;
-      update?: boolean | null;
-      delete?: boolean | null;
-    };
-    products?: {
-      view?: boolean | null;
-      create?: boolean | null;
-      update?: boolean | null;
-      delete?: boolean | null;
-    };
-    categories?: {
-      view?: boolean | null;
-      create?: boolean | null;
-      update?: boolean | null;
-      delete?: boolean | null;
-    };
-    media?: {
-      view?: boolean | null;
-      create?: boolean | null;
-      update?: boolean | null;
-      delete?: boolean | null;
-    };
-    users?: {
-      view?: boolean | null;
-      create?: boolean | null;
-      update?: boolean | null;
-      delete?: boolean | null;
-    };
-  };
+  permissions?:
+    | {
+        collection:
+          | 'posts'
+          | 'products'
+          | 'categories'
+          | 'media'
+          | 'users'
+          | 'pages'
+          | 'showcases'
+          | 'carts'
+          | 'orders';
+        view?: boolean | null;
+        create?: boolean | null;
+        update?: boolean | null;
+        delete?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -245,6 +242,7 @@ export interface Admin {
 export interface User {
   id: number;
   name: string;
+  email: string;
   /**
    * Contact phone number
    */
@@ -540,6 +538,83 @@ export interface Product {
    */
   slug: string;
   /**
+   * Product photos (multiple images supported)
+   */
+  images?: (number | Media)[] | null;
+  /**
+   * 1️⃣ First, add options like Color, Size, Material. Then click "Generate Variants" button below.
+   */
+  options?:
+    | {
+        /**
+         * Option name (e.g., Color)
+         */
+        name: string;
+        /**
+         * Add option values here
+         */
+        values: {
+          label: string;
+          id?: string | null;
+        }[];
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 2️⃣ Variants are auto-generated from options above. Update price, SKU, and inventory for each variant.
+   */
+  variants?:
+    | {
+        /**
+         * ✅ Auto-generated from selected options (e.g., "Red / Small")
+         */
+        title: string;
+        /**
+         * Selected option values for this variant
+         */
+        selectedOptions: {
+          /**
+           * Option name (e.g., Color)
+           */
+          option: string;
+          /**
+           * Option value (e.g., Red)
+           */
+          value: string;
+          id?: string | null;
+        }[];
+        /**
+         * Selling price
+         */
+        price: number;
+        /**
+         * Original price (for discounts)
+         */
+        compareAtPrice?: number | null;
+        /**
+         * Stock Keeping Unit
+         */
+        sku?: string | null;
+        /**
+         * Barcode (ISBN, UPC, GTIN, etc.)
+         */
+        barcode?: string | null;
+        /**
+         * Available quantity
+         */
+        inventory: number;
+        /**
+         * Specific image for this variant (optional)
+         */
+        image?: (number | null) | Media;
+        /**
+         * Make this variant available for purchase
+         */
+        available?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Full product description with formatting
    */
   description: {
@@ -620,10 +695,6 @@ export interface Product {
    */
   categories: (number | Category)[];
   /**
-   * Product photos (multiple images supported)
-   */
-  images?: (number | Media)[] | null;
-  /**
    * Show on home page as featured product
    */
   featured?: boolean | null;
@@ -647,6 +718,223 @@ export interface Product {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts".
+ */
+export interface Cart {
+  id: number;
+  /**
+   * User who owns this cart (null for guest carts)
+   */
+  user?: (number | null) | User;
+  /**
+   * Session ID for guest carts
+   */
+  sessionId?: string | null;
+  /**
+   * Total number of items in cart
+   */
+  itemsCount?: number | null;
+  /**
+   * Subtotal before discounts and shipping (VND)
+   */
+  subtotal?: number | null;
+  /**
+   * Total discount amount (VND)
+   */
+  discount?: number | null;
+  /**
+   * Total amount (VND)
+   */
+  total?: number | null;
+  /**
+   * Applied coupon code
+   */
+  couponCode?: string | null;
+  status: 'active' | 'abandoned' | 'converted' | 'expired';
+  createdAt: string;
+  updatedAt: string;
+  /**
+   * Cart expiration date (typically 30 days)
+   */
+  expiresAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cart-items".
+ */
+export interface CartItem {
+  id: number;
+  cart: number | Cart;
+  product: number | Product;
+  quantity: number;
+  /**
+   * Price at time of adding to cart (VND)
+   */
+  price: number;
+  addedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  /**
+   * Unique order identifier (e.g., ORD-2024-00001)
+   */
+  orderNumber: string;
+  /**
+   * Customer who placed the order (null for guest orders)
+   */
+  user?: (number | null) | User;
+  /**
+   * Customer information for guest orders
+   */
+  guestCustomer?: {
+    email?: string | null;
+    name?: string | null;
+    phone?: string | null;
+  };
+  shippingAddress: {
+    fullName: string;
+    phone: string;
+    address: string;
+    ward?: string | null;
+    district: string;
+    city: string;
+    postalCode?: string | null;
+  };
+  billingAddress?: {
+    sameAsShipping?: boolean | null;
+    fullName?: string | null;
+    phone?: string | null;
+    address?: string | null;
+    ward?: string | null;
+    district?: string | null;
+    city?: string | null;
+    postalCode?: string | null;
+  };
+  itemsCount?: number | null;
+  /**
+   * Sum of all items before discounts and shipping (VND)
+   */
+  subtotal: number;
+  /**
+   * Total discount amount (VND)
+   */
+  discount?: number | null;
+  /**
+   * Shipping cost (VND)
+   */
+  shippingFee?: number | null;
+  /**
+   * Tax amount (VND)
+   */
+  tax?: number | null;
+  /**
+   * Final total amount (VND)
+   */
+  total: number;
+  couponCode?: string | null;
+  paymentMethod: 'cod' | 'bank-transfer' | 'credit-card' | 'e-wallet';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  /**
+   * Payment gateway transaction ID
+   */
+  transactionId?: string | null;
+  shippingMethod: 'standard' | 'express' | 'same-day';
+  /**
+   * Shipping tracking number
+   */
+  trackingNumber?: string | null;
+  status: 'pending' | 'confirmed' | 'processing' | 'shipping' | 'delivered' | 'completed' | 'cancelled' | 'refunded';
+  /**
+   * Notes from customer
+   */
+  customerNotes?: string | null;
+  /**
+   * Internal notes (not visible to customer)
+   */
+  adminNotes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  confirmedAt?: string | null;
+  shippedAt?: string | null;
+  deliveredAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order-items".
+ */
+export interface OrderItem {
+  id: number;
+  order: number | Order;
+  product: number | Product;
+  /**
+   * Product details at time of order
+   */
+  productSnapshot?: {
+    name?: string | null;
+    sku?: string | null;
+    image?: string | null;
+  };
+  quantity: number;
+  /**
+   * Price per unit at time of order (VND)
+   */
+  price: number;
+  /**
+   * Quantity × Unit Price (VND)
+   */
+  subtotal: number;
+  /**
+   * Discount applied to this item (VND)
+   */
+  discount?: number | null;
+  /**
+   * Subtotal - Discount (VND)
+   */
+  total: number;
+  createdAt: string;
+  updatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wishlists".
+ */
+export interface Wishlist {
+  id: number;
+  /**
+   * User who saved this product
+   */
+  user: number | User;
+  /**
+   * Product saved to wishlist
+   */
+  product: number | Product;
+  /**
+   * Personal notes about this product
+   */
+  notes?: string | null;
+  /**
+   * How much the user wants this product
+   */
+  priority?: ('low' | 'medium' | 'high') | null;
+  /**
+   * Send notification when product price drops
+   */
+  notifyOnPriceChange?: boolean | null;
+  /**
+   * Send notification when out-of-stock product is available again
+   */
+  notifyOnBackInStock?: boolean | null;
+  createdAt: string;
+  updatedAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -735,6 +1023,26 @@ export interface PayloadLockedDocument {
         value: number | Product;
       } | null)
     | ({
+        relationTo: 'carts';
+        value: number | Cart;
+      } | null)
+    | ({
+        relationTo: 'cart-items';
+        value: number | CartItem;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'order-items';
+        value: number | OrderItem;
+      } | null)
+    | ({
+        relationTo: 'wishlists';
+        value: number | Wishlist;
+      } | null)
+    | ({
         relationTo: 'contact-inquiries';
         value: number | ContactInquiry;
       } | null)
@@ -797,46 +1105,12 @@ export interface RolesSelect<T extends boolean = true> {
   permissions?:
     | T
     | {
-        posts?:
-          | T
-          | {
-              view?: T;
-              create?: T;
-              update?: T;
-              delete?: T;
-            };
-        products?:
-          | T
-          | {
-              view?: T;
-              create?: T;
-              update?: T;
-              delete?: T;
-            };
-        categories?:
-          | T
-          | {
-              view?: T;
-              create?: T;
-              update?: T;
-              delete?: T;
-            };
-        media?:
-          | T
-          | {
-              view?: T;
-              create?: T;
-              update?: T;
-              delete?: T;
-            };
-        users?:
-          | T
-          | {
-              view?: T;
-              create?: T;
-              update?: T;
-              delete?: T;
-            };
+        collection?: T;
+        view?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -874,6 +1148,7 @@ export interface AdminsSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  email?: T;
   phone?: T;
   address?: T;
   status?: T;
@@ -972,13 +1247,45 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface ProductsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  images?: T;
+  options?:
+    | T
+    | {
+        name?: T;
+        values?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  variants?:
+    | T
+    | {
+        title?: T;
+        selectedOptions?:
+          | T
+          | {
+              option?: T;
+              value?: T;
+              id?: T;
+            };
+        price?: T;
+        compareAtPrice?: T;
+        sku?: T;
+        barcode?: T;
+        inventory?: T;
+        image?: T;
+        available?: T;
+        id?: T;
+      };
   description?: T;
   excerpt?: T;
   specifications?: T;
   benefits?: T;
   usageInstructions?: T;
   categories?: T;
-  images?: T;
   featured?: T;
   bestSeller?: T;
   displayOrder?: T;
@@ -988,6 +1295,130 @@ export interface ProductsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts_select".
+ */
+export interface CartsSelect<T extends boolean = true> {
+  user?: T;
+  sessionId?: T;
+  itemsCount?: T;
+  subtotal?: T;
+  discount?: T;
+  total?: T;
+  couponCode?: T;
+  status?: T;
+  createdAt?: T;
+  updatedAt?: T;
+  expiresAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cart-items_select".
+ */
+export interface CartItemsSelect<T extends boolean = true> {
+  cart?: T;
+  product?: T;
+  quantity?: T;
+  price?: T;
+  addedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  orderNumber?: T;
+  user?: T;
+  guestCustomer?:
+    | T
+    | {
+        email?: T;
+        name?: T;
+        phone?: T;
+      };
+  shippingAddress?:
+    | T
+    | {
+        fullName?: T;
+        phone?: T;
+        address?: T;
+        ward?: T;
+        district?: T;
+        city?: T;
+        postalCode?: T;
+      };
+  billingAddress?:
+    | T
+    | {
+        sameAsShipping?: T;
+        fullName?: T;
+        phone?: T;
+        address?: T;
+        ward?: T;
+        district?: T;
+        city?: T;
+        postalCode?: T;
+      };
+  itemsCount?: T;
+  subtotal?: T;
+  discount?: T;
+  shippingFee?: T;
+  tax?: T;
+  total?: T;
+  couponCode?: T;
+  paymentMethod?: T;
+  paymentStatus?: T;
+  transactionId?: T;
+  shippingMethod?: T;
+  trackingNumber?: T;
+  status?: T;
+  customerNotes?: T;
+  adminNotes?: T;
+  createdAt?: T;
+  updatedAt?: T;
+  confirmedAt?: T;
+  shippedAt?: T;
+  deliveredAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order-items_select".
+ */
+export interface OrderItemsSelect<T extends boolean = true> {
+  order?: T;
+  product?: T;
+  productSnapshot?:
+    | T
+    | {
+        name?: T;
+        sku?: T;
+        image?: T;
+      };
+  quantity?: T;
+  price?: T;
+  subtotal?: T;
+  discount?: T;
+  total?: T;
+  createdAt?: T;
+  updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wishlists_select".
+ */
+export interface WishlistsSelect<T extends boolean = true> {
+  user?: T;
+  product?: T;
+  notes?: T;
+  priority?: T;
+  notifyOnPriceChange?: T;
+  notifyOnBackInStock?: T;
+  createdAt?: T;
+  updatedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

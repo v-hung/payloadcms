@@ -18,6 +18,41 @@ import {
 } from "@payloadcms/db-sqlite/drizzle/sqlite-core";
 import { sql, relations } from "@payloadcms/db-sqlite/drizzle";
 
+export const roles_permissions = sqliteTable(
+  "roles_permissions",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: text("id").primaryKey(),
+    collection: text("collection", {
+      enum: [
+        "posts",
+        "products",
+        "categories",
+        "media",
+        "users",
+        "pages",
+        "showcases",
+        "carts",
+        "orders",
+      ],
+    }).notNull(),
+    create: integer("create", { mode: "boolean" }).default(false),
+    view: integer("view", { mode: "boolean" }).default(false),
+    update: integer("update", { mode: "boolean" }).default(false),
+    delete: integer("delete", { mode: "boolean" }).default(false),
+  },
+  (columns) => [
+    index("roles_permissions_order_idx").on(columns._order),
+    index("roles_permissions_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [roles.id],
+      name: "roles_permissions_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const roles = sqliteTable(
   "roles",
   {
@@ -25,66 +60,6 @@ export const roles = sqliteTable(
     slug: text("slug").notNull(),
     isSystem: integer("is_system", { mode: "boolean" }).default(false),
     displayOrder: numeric("display_order", { mode: "number" }).default(0),
-    permissions_posts_view: integer("permissions_posts_view", {
-      mode: "boolean",
-    }).default(false),
-    permissions_posts_create: integer("permissions_posts_create", {
-      mode: "boolean",
-    }).default(false),
-    permissions_posts_update: integer("permissions_posts_update", {
-      mode: "boolean",
-    }).default(false),
-    permissions_posts_delete: integer("permissions_posts_delete", {
-      mode: "boolean",
-    }).default(false),
-    permissions_products_view: integer("permissions_products_view", {
-      mode: "boolean",
-    }).default(false),
-    permissions_products_create: integer("permissions_products_create", {
-      mode: "boolean",
-    }).default(false),
-    permissions_products_update: integer("permissions_products_update", {
-      mode: "boolean",
-    }).default(false),
-    permissions_products_delete: integer("permissions_products_delete", {
-      mode: "boolean",
-    }).default(false),
-    permissions_categories_view: integer("permissions_categories_view", {
-      mode: "boolean",
-    }).default(false),
-    permissions_categories_create: integer("permissions_categories_create", {
-      mode: "boolean",
-    }).default(false),
-    permissions_categories_update: integer("permissions_categories_update", {
-      mode: "boolean",
-    }).default(false),
-    permissions_categories_delete: integer("permissions_categories_delete", {
-      mode: "boolean",
-    }).default(false),
-    permissions_media_view: integer("permissions_media_view", {
-      mode: "boolean",
-    }).default(false),
-    permissions_media_create: integer("permissions_media_create", {
-      mode: "boolean",
-    }).default(false),
-    permissions_media_update: integer("permissions_media_update", {
-      mode: "boolean",
-    }).default(false),
-    permissions_media_delete: integer("permissions_media_delete", {
-      mode: "boolean",
-    }).default(false),
-    permissions_users_view: integer("permissions_users_view", {
-      mode: "boolean",
-    }).default(false),
-    permissions_users_create: integer("permissions_users_create", {
-      mode: "boolean",
-    }).default(false),
-    permissions_users_update: integer("permissions_users_update", {
-      mode: "boolean",
-    }).default(false),
-    permissions_users_delete: integer("permissions_users_delete", {
-      mode: "boolean",
-    }).default(false),
     updatedAt: text("updated_at")
       .notNull()
       .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
@@ -193,6 +168,7 @@ export const users = sqliteTable(
   {
     id: integer("id").primaryKey(),
     name: text("name").notNull(),
+    email: text("email").notNull(),
     phone: text("phone"),
     address: text("address"),
     status: text("status", { enum: ["active", "inactive", "suspended"] })
@@ -568,6 +544,174 @@ export const categories_locales = sqliteTable(
   ],
 );
 
+export const products_options_values = sqliteTable(
+  "products_options_values",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: text("_parent_id").notNull(),
+    id: text("id").primaryKey(),
+  },
+  (columns) => [
+    index("products_options_values_order_idx").on(columns._order),
+    index("products_options_values_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [products_options.id],
+      name: "products_options_values_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const products_options_values_locales = sqliteTable(
+  "products_options_values_locales",
+  {
+    label: text("label"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: text("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex("products_options_values_locales_locale_parent_id_unique").on(
+      columns._locale,
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [products_options_values.id],
+      name: "products_options_values_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const products_options = sqliteTable(
+  "products_options",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: text("id").primaryKey(),
+  },
+  (columns) => [
+    index("products_options_order_idx").on(columns._order),
+    index("products_options_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [products.id],
+      name: "products_options_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const products_options_locales = sqliteTable(
+  "products_options_locales",
+  {
+    name: text("name"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: text("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex("products_options_locales_locale_parent_id_unique").on(
+      columns._locale,
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [products_options.id],
+      name: "products_options_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const products_variants_selected_options = sqliteTable(
+  "products_variants_selected_options",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: text("_parent_id").notNull(),
+    id: text("id").primaryKey(),
+  },
+  (columns) => [
+    index("products_variants_selected_options_order_idx").on(columns._order),
+    index("products_variants_selected_options_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [products_variants.id],
+      name: "products_variants_selected_options_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const products_variants_selected_options_locales = sqliteTable(
+  "products_variants_selected_options_locales",
+  {
+    option: text("option"),
+    value: text("value"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: text("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex(
+      "products_variants_selected_options_locales_locale_parent_id_",
+    ).on(columns._locale, columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [products_variants_selected_options.id],
+      name: "products_variants_selected_options_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const products_variants = sqliteTable(
+  "products_variants",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: text("id").primaryKey(),
+    price: numeric("price", { mode: "number" }).default(0),
+    compareAtPrice: numeric("compare_at_price", { mode: "number" }),
+    sku: text("sku"),
+    barcode: text("barcode"),
+    inventory: numeric("inventory", { mode: "number" }).default(0),
+    image: integer("image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    available: integer("available", { mode: "boolean" }).default(true),
+  },
+  (columns) => [
+    index("products_variants_order_idx").on(columns._order),
+    index("products_variants_parent_id_idx").on(columns._parentID),
+    index("products_variants_image_idx").on(columns.image),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [products.id],
+      name: "products_variants_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const products_variants_locales = sqliteTable(
+  "products_variants_locales",
+  {
+    title: text("title"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: text("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex("products_variants_locales_locale_parent_id_unique").on(
+      columns._locale,
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [products_variants.id],
+      name: "products_variants_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const products = sqliteTable(
   "products",
   {
@@ -653,6 +797,180 @@ export const products_rels = sqliteTable(
       columns: [columns["mediaID"]],
       foreignColumns: [media.id],
       name: "products_rels_media_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _products_v_version_options_values = sqliteTable(
+  "_products_v_version_options_values",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: integer("id").primaryKey(),
+    _uuid: text("_uuid"),
+  },
+  (columns) => [
+    index("_products_v_version_options_values_order_idx").on(columns._order),
+    index("_products_v_version_options_values_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_products_v_version_options.id],
+      name: "_products_v_version_options_values_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _products_v_version_options_values_locales = sqliteTable(
+  "_products_v_version_options_values_locales",
+  {
+    label: text("label"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: integer("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex(
+      "_products_v_version_options_values_locales_locale_parent_id_",
+    ).on(columns._locale, columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_products_v_version_options_values.id],
+      name: "_products_v_version_options_values_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _products_v_version_options = sqliteTable(
+  "_products_v_version_options",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: integer("id").primaryKey(),
+    _uuid: text("_uuid"),
+  },
+  (columns) => [
+    index("_products_v_version_options_order_idx").on(columns._order),
+    index("_products_v_version_options_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_products_v.id],
+      name: "_products_v_version_options_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _products_v_version_options_locales = sqliteTable(
+  "_products_v_version_options_locales",
+  {
+    name: text("name"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: integer("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex(
+      "_products_v_version_options_locales_locale_parent_id_unique",
+    ).on(columns._locale, columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_products_v_version_options.id],
+      name: "_products_v_version_options_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _products_v_version_variants_selected_options = sqliteTable(
+  "_products_v_version_variants_selected_options",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: integer("id").primaryKey(),
+    _uuid: text("_uuid"),
+  },
+  (columns) => [
+    index("_products_v_version_variants_selected_options_order_idx").on(
+      columns._order,
+    ),
+    index("_products_v_version_variants_selected_options_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_products_v_version_variants.id],
+      name: "_products_v_version_variants_selected_options_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _products_v_version_variants_selected_options_locales =
+  sqliteTable(
+    "_products_v_version_variants_selected_options_locales",
+    {
+      option: text("option"),
+      value: text("value"),
+      id: integer("id").primaryKey(),
+      _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+      _parentID: integer("_parent_id").notNull(),
+    },
+    (columns) => [
+      uniqueIndex(
+        "_products_v_version_variants_selected_options_locales_locale",
+      ).on(columns._locale, columns._parentID),
+      foreignKey({
+        columns: [columns["_parentID"]],
+        foreignColumns: [_products_v_version_variants_selected_options.id],
+        name: "_products_v_version_variants_selected_options_locales_par_fk",
+      }).onDelete("cascade"),
+    ],
+  );
+
+export const _products_v_version_variants = sqliteTable(
+  "_products_v_version_variants",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: integer("id").primaryKey(),
+    price: numeric("price", { mode: "number" }).default(0),
+    compareAtPrice: numeric("compare_at_price", { mode: "number" }),
+    sku: text("sku"),
+    barcode: text("barcode"),
+    inventory: numeric("inventory", { mode: "number" }).default(0),
+    image: integer("image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    available: integer("available", { mode: "boolean" }).default(true),
+    _uuid: text("_uuid"),
+  },
+  (columns) => [
+    index("_products_v_version_variants_order_idx").on(columns._order),
+    index("_products_v_version_variants_parent_id_idx").on(columns._parentID),
+    index("_products_v_version_variants_image_idx").on(columns.image),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_products_v.id],
+      name: "_products_v_version_variants_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _products_v_version_variants_locales = sqliteTable(
+  "_products_v_version_variants_locales",
+  {
+    title: text("title"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: integer("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex(
+      "_products_v_version_variants_locales_locale_parent_id_unique",
+    ).on(columns._locale, columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_products_v_version_variants.id],
+      name: "_products_v_version_variants_locales_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -777,6 +1095,253 @@ export const _products_v_rels = sqliteTable(
       foreignColumns: [media.id],
       name: "_products_v_rels_media_fk",
     }).onDelete("cascade"),
+  ],
+);
+
+export const carts = sqliteTable(
+  "carts",
+  {
+    id: integer("id").primaryKey(),
+    user: integer("user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    sessionId: text("session_id"),
+    itemsCount: numeric("items_count", { mode: "number" }).default(0),
+    subtotal: numeric("subtotal", { mode: "number" }).default(0),
+    discount: numeric("discount", { mode: "number" }).default(0),
+    total: numeric("total", { mode: "number" }).default(0),
+    couponCode: text("coupon_code"),
+    status: text("status", {
+      enum: ["active", "abandoned", "converted", "expired"],
+    })
+      .notNull()
+      .default("active"),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    expiresAt: text("expires_at").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+  },
+  (columns) => [
+    index("carts_user_idx").on(columns.user),
+    index("carts_session_id_idx").on(columns.sessionId),
+  ],
+);
+
+export const cart_items = sqliteTable(
+  "cart_items",
+  {
+    id: integer("id").primaryKey(),
+    cart: integer("cart_id")
+      .notNull()
+      .references(() => carts.id, {
+        onDelete: "set null",
+      }),
+    product: integer("product_id")
+      .notNull()
+      .references(() => products.id, {
+        onDelete: "set null",
+      }),
+    quantity: numeric("quantity", { mode: "number" }).notNull().default(1),
+    price: numeric("price", { mode: "number" }).notNull(),
+    addedAt: text("added_at").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+  },
+  (columns) => [
+    index("cart_items_cart_idx").on(columns.cart),
+    index("cart_items_product_idx").on(columns.product),
+    index("cart_items_updated_at_idx").on(columns.updatedAt),
+    index("cart_items_created_at_idx").on(columns.createdAt),
+  ],
+);
+
+export const orders = sqliteTable(
+  "orders",
+  {
+    id: integer("id").primaryKey(),
+    orderNumber: text("order_number").notNull(),
+    user: integer("user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    guestCustomer_email: text("guest_customer_email"),
+    guestCustomer_name: text("guest_customer_name"),
+    guestCustomer_phone: text("guest_customer_phone"),
+    shippingAddress_fullName: text("shipping_address_full_name").notNull(),
+    shippingAddress_phone: text("shipping_address_phone").notNull(),
+    shippingAddress_address: text("shipping_address_address").notNull(),
+    shippingAddress_ward: text("shipping_address_ward"),
+    shippingAddress_district: text("shipping_address_district").notNull(),
+    shippingAddress_city: text("shipping_address_city").notNull(),
+    shippingAddress_postalCode: text("shipping_address_postal_code"),
+    billingAddress_sameAsShipping: integer("billing_address_same_as_shipping", {
+      mode: "boolean",
+    }).default(true),
+    billingAddress_fullName: text("billing_address_full_name"),
+    billingAddress_phone: text("billing_address_phone"),
+    billingAddress_address: text("billing_address_address"),
+    billingAddress_ward: text("billing_address_ward"),
+    billingAddress_district: text("billing_address_district"),
+    billingAddress_city: text("billing_address_city"),
+    billingAddress_postalCode: text("billing_address_postal_code"),
+    itemsCount: numeric("items_count", { mode: "number" }).default(0),
+    subtotal: numeric("subtotal", { mode: "number" }).notNull(),
+    discount: numeric("discount", { mode: "number" }).default(0),
+    shippingFee: numeric("shipping_fee", { mode: "number" }).default(0),
+    tax: numeric("tax", { mode: "number" }).default(0),
+    total: numeric("total", { mode: "number" }).notNull(),
+    couponCode: text("coupon_code"),
+    paymentMethod: text("payment_method", {
+      enum: ["cod", "bank-transfer", "credit-card", "e-wallet"],
+    }).notNull(),
+    paymentStatus: text("payment_status", {
+      enum: ["pending", "paid", "failed", "refunded"],
+    })
+      .notNull()
+      .default("pending"),
+    transactionId: text("transaction_id"),
+    shippingMethod: text("shipping_method", {
+      enum: ["standard", "express", "same-day"],
+    }).notNull(),
+    trackingNumber: text("tracking_number"),
+    status: text("status", {
+      enum: [
+        "pending",
+        "confirmed",
+        "processing",
+        "shipping",
+        "delivered",
+        "completed",
+        "cancelled",
+        "refunded",
+      ],
+    })
+      .notNull()
+      .default("pending"),
+    customerNotes: text("customer_notes"),
+    adminNotes: text("admin_notes"),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    confirmedAt: text("confirmed_at").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+    shippedAt: text("shipped_at").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+    deliveredAt: text("delivered_at").default(
+      sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+    ),
+  },
+  (columns) => [
+    uniqueIndex("orders_order_number_idx").on(columns.orderNumber),
+    index("orders_user_idx").on(columns.user),
+  ],
+);
+
+export const order_items = sqliteTable(
+  "order_items",
+  {
+    id: integer("id").primaryKey(),
+    order: integer("order_id")
+      .notNull()
+      .references(() => orders.id, {
+        onDelete: "set null",
+      }),
+    product: integer("product_id")
+      .notNull()
+      .references(() => products.id, {
+        onDelete: "set null",
+      }),
+    productSnapshot_sku: text("product_snapshot_sku"),
+    productSnapshot_image: text("product_snapshot_image"),
+    quantity: numeric("quantity", { mode: "number" }).notNull(),
+    price: numeric("price", { mode: "number" }).notNull(),
+    subtotal: numeric("subtotal", { mode: "number" }).notNull(),
+    discount: numeric("discount", { mode: "number" }).default(0),
+    total: numeric("total", { mode: "number" }).notNull(),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+  },
+  (columns) => [
+    index("order_items_order_idx").on(columns.order),
+    index("order_items_product_idx").on(columns.product),
+    index("order_items_updated_at_idx").on(columns.updatedAt),
+  ],
+);
+
+export const order_items_locales = sqliteTable(
+  "order_items_locales",
+  {
+    productSnapshot_name: text("product_snapshot_name"),
+    id: integer("id").primaryKey(),
+    _locale: text("_locale", { enum: ["vi", "en"] }).notNull(),
+    _parentID: integer("_parent_id").notNull(),
+  },
+  (columns) => [
+    uniqueIndex("order_items_locales_locale_parent_id_unique").on(
+      columns._locale,
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [order_items.id],
+      name: "order_items_locales_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const wishlists = sqliteTable(
+  "wishlists",
+  {
+    id: integer("id").primaryKey(),
+    user: integer("user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "set null",
+      }),
+    product: integer("product_id")
+      .notNull()
+      .references(() => products.id, {
+        onDelete: "set null",
+      }),
+    notes: text("notes"),
+    priority: text("priority", { enum: ["low", "medium", "high"] }).default(
+      "medium",
+    ),
+    notifyOnPriceChange: integer("notify_on_price_change", {
+      mode: "boolean",
+    }).default(false),
+    notifyOnBackInStock: integer("notify_on_back_in_stock", {
+      mode: "boolean",
+    }).default(false),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`),
+  },
+  (columns) => [
+    index("wishlists_user_idx").on(columns.user),
+    index("wishlists_product_idx").on(columns.product),
   ],
 );
 
@@ -938,6 +1503,11 @@ export const payload_locked_documents_rels = sqliteTable(
     showcasesID: integer("showcases_id"),
     categoriesID: integer("categories_id"),
     productsID: integer("products_id"),
+    cartsID: integer("carts_id"),
+    "cart-itemsID": integer("cart_items_id"),
+    ordersID: integer("orders_id"),
+    "order-itemsID": integer("order_items_id"),
+    wishlistsID: integer("wishlists_id"),
     "contact-inquiriesID": integer("contact_inquiries_id"),
     mediaID: integer("media_id"),
   },
@@ -958,6 +1528,17 @@ export const payload_locked_documents_rels = sqliteTable(
     ),
     index("payload_locked_documents_rels_products_id_idx").on(
       columns.productsID,
+    ),
+    index("payload_locked_documents_rels_carts_id_idx").on(columns.cartsID),
+    index("payload_locked_documents_rels_cart_items_id_idx").on(
+      columns["cart-itemsID"],
+    ),
+    index("payload_locked_documents_rels_orders_id_idx").on(columns.ordersID),
+    index("payload_locked_documents_rels_order_items_id_idx").on(
+      columns["order-itemsID"],
+    ),
+    index("payload_locked_documents_rels_wishlists_id_idx").on(
+      columns.wishlistsID,
     ),
     index("payload_locked_documents_rels_contact_inquiries_id_idx").on(
       columns["contact-inquiriesID"],
@@ -1007,6 +1588,31 @@ export const payload_locked_documents_rels = sqliteTable(
       columns: [columns["productsID"]],
       foreignColumns: [products.id],
       name: "payload_locked_documents_rels_products_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["cartsID"]],
+      foreignColumns: [carts.id],
+      name: "payload_locked_documents_rels_carts_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["cart-itemsID"]],
+      foreignColumns: [cart_items.id],
+      name: "payload_locked_documents_rels_cart_items_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["ordersID"]],
+      foreignColumns: [orders.id],
+      name: "payload_locked_documents_rels_orders_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["order-itemsID"]],
+      foreignColumns: [order_items.id],
+      name: "payload_locked_documents_rels_order_items_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["wishlistsID"]],
+      foreignColumns: [wishlists.id],
+      name: "payload_locked_documents_rels_wishlists_fk",
     }).onDelete("cascade"),
     foreignKey({
       columns: [columns["contact-inquiriesID"]],
@@ -1157,6 +1763,16 @@ export const company_info_locales = sqliteTable(
   ],
 );
 
+export const relations_roles_permissions = relations(
+  roles_permissions,
+  ({ one }) => ({
+    _parentID: one(roles, {
+      fields: [roles_permissions._parentID],
+      references: [roles.id],
+      relationName: "permissions",
+    }),
+  }),
+);
 export const relations_roles_locales = relations(roles_locales, ({ one }) => ({
   _parentID: one(roles, {
     fields: [roles_locales._parentID],
@@ -1165,6 +1781,9 @@ export const relations_roles_locales = relations(roles_locales, ({ one }) => ({
   }),
 }));
 export const relations_roles = relations(roles, ({ many }) => ({
+  permissions: many(roles_permissions, {
+    relationName: "permissions",
+  }),
   _locales: many(roles_locales, {
     relationName: "_locales",
   }),
@@ -1307,6 +1926,109 @@ export const relations_categories = relations(categories, ({ many }) => ({
     relationName: "_locales",
   }),
 }));
+export const relations_products_options_values_locales = relations(
+  products_options_values_locales,
+  ({ one }) => ({
+    _parentID: one(products_options_values, {
+      fields: [products_options_values_locales._parentID],
+      references: [products_options_values.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_products_options_values = relations(
+  products_options_values,
+  ({ one, many }) => ({
+    _parentID: one(products_options, {
+      fields: [products_options_values._parentID],
+      references: [products_options.id],
+      relationName: "values",
+    }),
+    _locales: many(products_options_values_locales, {
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_products_options_locales = relations(
+  products_options_locales,
+  ({ one }) => ({
+    _parentID: one(products_options, {
+      fields: [products_options_locales._parentID],
+      references: [products_options.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_products_options = relations(
+  products_options,
+  ({ one, many }) => ({
+    _parentID: one(products, {
+      fields: [products_options._parentID],
+      references: [products.id],
+      relationName: "options",
+    }),
+    _locales: many(products_options_locales, {
+      relationName: "_locales",
+    }),
+    values: many(products_options_values, {
+      relationName: "values",
+    }),
+  }),
+);
+export const relations_products_variants_selected_options_locales = relations(
+  products_variants_selected_options_locales,
+  ({ one }) => ({
+    _parentID: one(products_variants_selected_options, {
+      fields: [products_variants_selected_options_locales._parentID],
+      references: [products_variants_selected_options.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_products_variants_selected_options = relations(
+  products_variants_selected_options,
+  ({ one, many }) => ({
+    _parentID: one(products_variants, {
+      fields: [products_variants_selected_options._parentID],
+      references: [products_variants.id],
+      relationName: "selectedOptions",
+    }),
+    _locales: many(products_variants_selected_options_locales, {
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_products_variants_locales = relations(
+  products_variants_locales,
+  ({ one }) => ({
+    _parentID: one(products_variants, {
+      fields: [products_variants_locales._parentID],
+      references: [products_variants.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_products_variants = relations(
+  products_variants,
+  ({ one, many }) => ({
+    _parentID: one(products, {
+      fields: [products_variants._parentID],
+      references: [products.id],
+      relationName: "variants",
+    }),
+    _locales: many(products_variants_locales, {
+      relationName: "_locales",
+    }),
+    selectedOptions: many(products_variants_selected_options, {
+      relationName: "selectedOptions",
+    }),
+    image: one(media, {
+      fields: [products_variants.image],
+      references: [media.id],
+      relationName: "image",
+    }),
+  }),
+);
 export const relations_products_locales = relations(
   products_locales,
   ({ one }) => ({
@@ -1335,6 +2057,12 @@ export const relations_products_rels = relations(products_rels, ({ one }) => ({
   }),
 }));
 export const relations_products = relations(products, ({ many }) => ({
+  options: many(products_options, {
+    relationName: "options",
+  }),
+  variants: many(products_variants, {
+    relationName: "variants",
+  }),
   _locales: many(products_locales, {
     relationName: "_locales",
   }),
@@ -1342,6 +2070,110 @@ export const relations_products = relations(products, ({ many }) => ({
     relationName: "_rels",
   }),
 }));
+export const relations__products_v_version_options_values_locales = relations(
+  _products_v_version_options_values_locales,
+  ({ one }) => ({
+    _parentID: one(_products_v_version_options_values, {
+      fields: [_products_v_version_options_values_locales._parentID],
+      references: [_products_v_version_options_values.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations__products_v_version_options_values = relations(
+  _products_v_version_options_values,
+  ({ one, many }) => ({
+    _parentID: one(_products_v_version_options, {
+      fields: [_products_v_version_options_values._parentID],
+      references: [_products_v_version_options.id],
+      relationName: "values",
+    }),
+    _locales: many(_products_v_version_options_values_locales, {
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations__products_v_version_options_locales = relations(
+  _products_v_version_options_locales,
+  ({ one }) => ({
+    _parentID: one(_products_v_version_options, {
+      fields: [_products_v_version_options_locales._parentID],
+      references: [_products_v_version_options.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations__products_v_version_options = relations(
+  _products_v_version_options,
+  ({ one, many }) => ({
+    _parentID: one(_products_v, {
+      fields: [_products_v_version_options._parentID],
+      references: [_products_v.id],
+      relationName: "version_options",
+    }),
+    _locales: many(_products_v_version_options_locales, {
+      relationName: "_locales",
+    }),
+    values: many(_products_v_version_options_values, {
+      relationName: "values",
+    }),
+  }),
+);
+export const relations__products_v_version_variants_selected_options_locales =
+  relations(
+    _products_v_version_variants_selected_options_locales,
+    ({ one }) => ({
+      _parentID: one(_products_v_version_variants_selected_options, {
+        fields: [
+          _products_v_version_variants_selected_options_locales._parentID,
+        ],
+        references: [_products_v_version_variants_selected_options.id],
+        relationName: "_locales",
+      }),
+    }),
+  );
+export const relations__products_v_version_variants_selected_options =
+  relations(_products_v_version_variants_selected_options, ({ one, many }) => ({
+    _parentID: one(_products_v_version_variants, {
+      fields: [_products_v_version_variants_selected_options._parentID],
+      references: [_products_v_version_variants.id],
+      relationName: "selectedOptions",
+    }),
+    _locales: many(_products_v_version_variants_selected_options_locales, {
+      relationName: "_locales",
+    }),
+  }));
+export const relations__products_v_version_variants_locales = relations(
+  _products_v_version_variants_locales,
+  ({ one }) => ({
+    _parentID: one(_products_v_version_variants, {
+      fields: [_products_v_version_variants_locales._parentID],
+      references: [_products_v_version_variants.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations__products_v_version_variants = relations(
+  _products_v_version_variants,
+  ({ one, many }) => ({
+    _parentID: one(_products_v, {
+      fields: [_products_v_version_variants._parentID],
+      references: [_products_v.id],
+      relationName: "version_variants",
+    }),
+    _locales: many(_products_v_version_variants_locales, {
+      relationName: "_locales",
+    }),
+    selectedOptions: many(_products_v_version_variants_selected_options, {
+      relationName: "selectedOptions",
+    }),
+    image: one(media, {
+      fields: [_products_v_version_variants.image],
+      references: [media.id],
+      relationName: "image",
+    }),
+  }),
+);
 export const relations__products_v_locales = relations(
   _products_v_locales,
   ({ one }) => ({
@@ -1380,6 +2212,12 @@ export const relations__products_v = relations(
       references: [products.id],
       relationName: "parent",
     }),
+    version_options: many(_products_v_version_options, {
+      relationName: "version_options",
+    }),
+    version_variants: many(_products_v_version_variants, {
+      relationName: "version_variants",
+    }),
     _locales: many(_products_v_locales, {
       relationName: "_locales",
     }),
@@ -1388,6 +2226,72 @@ export const relations__products_v = relations(
     }),
   }),
 );
+export const relations_carts = relations(carts, ({ one }) => ({
+  user: one(users, {
+    fields: [carts.user],
+    references: [users.id],
+    relationName: "user",
+  }),
+}));
+export const relations_cart_items = relations(cart_items, ({ one }) => ({
+  cart: one(carts, {
+    fields: [cart_items.cart],
+    references: [carts.id],
+    relationName: "cart",
+  }),
+  product: one(products, {
+    fields: [cart_items.product],
+    references: [products.id],
+    relationName: "product",
+  }),
+}));
+export const relations_orders = relations(orders, ({ one }) => ({
+  user: one(users, {
+    fields: [orders.user],
+    references: [users.id],
+    relationName: "user",
+  }),
+}));
+export const relations_order_items_locales = relations(
+  order_items_locales,
+  ({ one }) => ({
+    _parentID: one(order_items, {
+      fields: [order_items_locales._parentID],
+      references: [order_items.id],
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_order_items = relations(
+  order_items,
+  ({ one, many }) => ({
+    order: one(orders, {
+      fields: [order_items.order],
+      references: [orders.id],
+      relationName: "order",
+    }),
+    product: one(products, {
+      fields: [order_items.product],
+      references: [products.id],
+      relationName: "product",
+    }),
+    _locales: many(order_items_locales, {
+      relationName: "_locales",
+    }),
+  }),
+);
+export const relations_wishlists = relations(wishlists, ({ one }) => ({
+  user: one(users, {
+    fields: [wishlists.user],
+    references: [users.id],
+    relationName: "user",
+  }),
+  product: one(products, {
+    fields: [wishlists.product],
+    references: [products.id],
+    relationName: "product",
+  }),
+}));
 export const relations_contact_inquiries = relations(
   contact_inquiries,
   () => ({}),
@@ -1452,6 +2356,31 @@ export const relations_payload_locked_documents_rels = relations(
       fields: [payload_locked_documents_rels.productsID],
       references: [products.id],
       relationName: "products",
+    }),
+    cartsID: one(carts, {
+      fields: [payload_locked_documents_rels.cartsID],
+      references: [carts.id],
+      relationName: "carts",
+    }),
+    "cart-itemsID": one(cart_items, {
+      fields: [payload_locked_documents_rels["cart-itemsID"]],
+      references: [cart_items.id],
+      relationName: "cart-items",
+    }),
+    ordersID: one(orders, {
+      fields: [payload_locked_documents_rels.ordersID],
+      references: [orders.id],
+      relationName: "orders",
+    }),
+    "order-itemsID": one(order_items, {
+      fields: [payload_locked_documents_rels["order-itemsID"]],
+      references: [order_items.id],
+      relationName: "order-items",
+    }),
+    wishlistsID: one(wishlists, {
+      fields: [payload_locked_documents_rels.wishlistsID],
+      references: [wishlists.id],
+      relationName: "wishlists",
     }),
     "contact-inquiriesID": one(contact_inquiries, {
       fields: [payload_locked_documents_rels["contact-inquiriesID"]],
@@ -1538,6 +2467,7 @@ export const relations_company_info = relations(
 );
 
 type DatabaseSchema = {
+  roles_permissions: typeof roles_permissions;
   roles: typeof roles;
   roles_locales: typeof roles_locales;
   admins_sessions: typeof admins_sessions;
@@ -1554,12 +2484,34 @@ type DatabaseSchema = {
   showcases_rels: typeof showcases_rels;
   categories: typeof categories;
   categories_locales: typeof categories_locales;
+  products_options_values: typeof products_options_values;
+  products_options_values_locales: typeof products_options_values_locales;
+  products_options: typeof products_options;
+  products_options_locales: typeof products_options_locales;
+  products_variants_selected_options: typeof products_variants_selected_options;
+  products_variants_selected_options_locales: typeof products_variants_selected_options_locales;
+  products_variants: typeof products_variants;
+  products_variants_locales: typeof products_variants_locales;
   products: typeof products;
   products_locales: typeof products_locales;
   products_rels: typeof products_rels;
+  _products_v_version_options_values: typeof _products_v_version_options_values;
+  _products_v_version_options_values_locales: typeof _products_v_version_options_values_locales;
+  _products_v_version_options: typeof _products_v_version_options;
+  _products_v_version_options_locales: typeof _products_v_version_options_locales;
+  _products_v_version_variants_selected_options: typeof _products_v_version_variants_selected_options;
+  _products_v_version_variants_selected_options_locales: typeof _products_v_version_variants_selected_options_locales;
+  _products_v_version_variants: typeof _products_v_version_variants;
+  _products_v_version_variants_locales: typeof _products_v_version_variants_locales;
   _products_v: typeof _products_v;
   _products_v_locales: typeof _products_v_locales;
   _products_v_rels: typeof _products_v_rels;
+  carts: typeof carts;
+  cart_items: typeof cart_items;
+  orders: typeof orders;
+  order_items: typeof order_items;
+  order_items_locales: typeof order_items_locales;
+  wishlists: typeof wishlists;
   contact_inquiries: typeof contact_inquiries;
   media: typeof media;
   media_locales: typeof media_locales;
@@ -1572,6 +2524,7 @@ type DatabaseSchema = {
   company_info_social_media: typeof company_info_social_media;
   company_info: typeof company_info;
   company_info_locales: typeof company_info_locales;
+  relations_roles_permissions: typeof relations_roles_permissions;
   relations_roles_locales: typeof relations_roles_locales;
   relations_roles: typeof relations_roles;
   relations_admins_sessions: typeof relations_admins_sessions;
@@ -1588,12 +2541,34 @@ type DatabaseSchema = {
   relations_showcases: typeof relations_showcases;
   relations_categories_locales: typeof relations_categories_locales;
   relations_categories: typeof relations_categories;
+  relations_products_options_values_locales: typeof relations_products_options_values_locales;
+  relations_products_options_values: typeof relations_products_options_values;
+  relations_products_options_locales: typeof relations_products_options_locales;
+  relations_products_options: typeof relations_products_options;
+  relations_products_variants_selected_options_locales: typeof relations_products_variants_selected_options_locales;
+  relations_products_variants_selected_options: typeof relations_products_variants_selected_options;
+  relations_products_variants_locales: typeof relations_products_variants_locales;
+  relations_products_variants: typeof relations_products_variants;
   relations_products_locales: typeof relations_products_locales;
   relations_products_rels: typeof relations_products_rels;
   relations_products: typeof relations_products;
+  relations__products_v_version_options_values_locales: typeof relations__products_v_version_options_values_locales;
+  relations__products_v_version_options_values: typeof relations__products_v_version_options_values;
+  relations__products_v_version_options_locales: typeof relations__products_v_version_options_locales;
+  relations__products_v_version_options: typeof relations__products_v_version_options;
+  relations__products_v_version_variants_selected_options_locales: typeof relations__products_v_version_variants_selected_options_locales;
+  relations__products_v_version_variants_selected_options: typeof relations__products_v_version_variants_selected_options;
+  relations__products_v_version_variants_locales: typeof relations__products_v_version_variants_locales;
+  relations__products_v_version_variants: typeof relations__products_v_version_variants;
   relations__products_v_locales: typeof relations__products_v_locales;
   relations__products_v_rels: typeof relations__products_v_rels;
   relations__products_v: typeof relations__products_v;
+  relations_carts: typeof relations_carts;
+  relations_cart_items: typeof relations_cart_items;
+  relations_orders: typeof relations_orders;
+  relations_order_items_locales: typeof relations_order_items_locales;
+  relations_order_items: typeof relations_order_items;
+  relations_wishlists: typeof relations_wishlists;
   relations_contact_inquiries: typeof relations_contact_inquiries;
   relations_media_locales: typeof relations_media_locales;
   relations_media: typeof relations_media;
