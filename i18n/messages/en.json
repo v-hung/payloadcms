@@ -1,20 +1,41 @@
 {
-	"HomePage": {
-		"title": "Welcome to Our Company",
-		"subtitle": "Leading Manufacturer and Exporter",
-		"featuredProducts": "Featured Products",
-		"viewAllProducts": "View All Products",
-		"aboutSection": "About Us",
-		"learnMore": "Learn More",
-		"manufacturingFactorySize": "Factory Size",
-		"manufacturingCapacity": "Production Capacity",
-		"manufacturingLeadTimes": "Lead Times",
-		"manufacturingLearnMore": "Learn More About Manufacturing",
-		"featuredArticles": "Latest News & Articles",
-		"viewAllArticles": "View All Articles",
+	"Common": {
+		"loading": "Loading...",
+		"error": "An error occurred",
+		"notFound": "Page not found",
+		"backToHome": "Back to Home",
+		"searchPlaceholder": "Search products and articles...",
 		"readMore": "Read More",
+		"viewDetails": "View Details",
 		"publishedOn": "Published on",
-		"noFeaturedProductsAvailable": "No featured products available"
+		"validationFailed": "Validation failed",
+		"internalServerError": "Internal server error"
+	},
+	"Actions": {
+		"submit": "Submit",
+		"cancel": "Cancel",
+		"save": "Save",
+		"delete": "Delete",
+		"edit": "Edit",
+		"learnMore": "Learn More",
+		"viewAll": "View All",
+		"sendMessage": "Send Message",
+		"sending": "Sending...",
+		"browseProducts": "Browse Products",
+		"browseArticles": "Browse Articles"
+	},
+	"Validation": {
+		"required": "{field} is required",
+		"minLength": "{field} must be at least {count} characters",
+		"maxLength": "{field} must be less than {count} characters",
+		"invalidEmail": "Invalid email format",
+		"invalidPhone": "Invalid phone number"
+	},
+	"Fields": {
+		"name": "Name",
+		"email": "Email",
+		"phone": "Phone",
+		"message": "Message"
 	},
 	"Navigation": {
 		"home": "Home",
@@ -30,81 +51,72 @@
 		"followUs": "Follow Us",
 		"allRightsReserved": "All rights reserved"
 	},
-	"AboutPage": {
-		"title": "About Us",
-		"ourVision": "Our Vision",
-		"ourMission": "Our Mission",
-		"coreValues": "Core Values"
-	},
-	"ProductsPage": {
-		"title": "Our Products",
-		"allCategories": "All Categories",
-		"filterByCategory": "Filter by Category",
-		"noProducts": "No products found",
-		"viewDetails": "View Details",
-		"bestSeller": "Best Seller",
-		"featured": "Featured"
-	},
-	"ProductDetail": {
-		"description": "Description",
-		"specifications": "Specifications",
-		"benefits": "Benefits",
-		"usageInstructions": "Usage Instructions",
-		"relatedProducts": "Related Products",
-		"backToProducts": "Back to Products"
-	},
-	"ManufacturingPage": {
-		"title": "Manufacturing Capability",
-		"metricsTitle": "Facility Metrics",
-		"factorySizeLabel": "Factory Size",
-		"capacityLabel": "Production Capacity",
-		"leadTimesLabel": "Lead Times",
-		"certificationsTitle": "Certifications & Quality Standards",
-		"processesTitle": "Manufacturing Processes",
-		"galleryTitle": "Factory Gallery"
-	},
-	"NewsPage": {
-		"title": "News & Articles",
-		"latestNews": "Latest News",
-		"readMore": "Read More",
-		"noArticles": "No articles found",
-		"publishedOn": "Published on"
-	},
-	"ContactPage": {
-		"title": "Contact Us",
-		"getInTouch": "Get in Touch",
-		"name": "Full Name",
-		"email": "Email Address",
-		"phone": "Phone Number",
-		"message": "Message",
-		"submit": "Send Message",
-		"successMessage": "Thank you for your message. We will contact you soon.",
-		"errorMessage": "Failed to send message. Please try again.",
-		"namePlaceholder": "Enter your name",
-		"emailPlaceholder": "your.email@example.com",
-		"phonePlaceholder": "+84 xxx xxx xxx",
-		"messagePlaceholder": "Tell us about your inquiry..."
-	},
-	"Common": {
-		"loading": "Loading...",
-		"error": "An error occurred",
-		"notFound": "Page not found",
-		"backToHome": "Back to Home",
-		"searchPlaceholder": "Search products and articles..."
-	},
-	"SearchPage": {
-		"title": "Search Results",
-		"placeholder": "Search products and articles...",
-		"noResults": "No results found for your search",
-		"resultsFor": "Results for",
-		"productsSection": "Products",
-		"articlesSection": "Articles",
-		"enterSearchQuery": "Enter a search query to find products and articles",
-		"tryDifferent": "Try different keywords or browse our categories",
-		"browseProducts": "Browse Products",
-		"browseArticles": "Browse Articles",
-		"viewDetails": "View Details",
-		"readMore": "Read More",
-		"publishedOn": "Published on"
+	"Pages": {
+		"Home": {
+			"title": "Welcome to Our Company",
+			"subtitle": "Leading Manufacturer and Exporter",
+			"featuredProducts": "Featured Products",
+			"viewAllProducts": "View All Products",
+			"aboutSection": "About Us",
+			"manufacturingFactorySize": "Factory Size",
+			"manufacturingCapacity": "Production Capacity",
+			"manufacturingLeadTimes": "Lead Times",
+			"manufacturingLearnMore": "Learn More About Manufacturing",
+			"featuredArticles": "Latest News & Articles",
+			"viewAllArticles": "View All Articles",
+			"noFeaturedProductsAvailable": "No featured products available"
+		},
+		"About": {
+			"title": "About Us",
+			"ourVision": "Our Vision",
+			"ourMission": "Our Mission",
+			"coreValues": "Core Values"
+		},
+		"Products": {
+			"title": "Our Products",
+			"allCategories": "All Categories",
+			"filterByCategory": "Filter by Category",
+			"noProducts": "No products found",
+			"bestSeller": "Best Seller",
+			"featured": "Featured"
+		},
+		"ProductDetail": {
+			"description": "Description",
+			"specifications": "Specifications",
+			"benefits": "Benefits",
+			"usageInstructions": "Usage Instructions",
+			"relatedProducts": "Related Products",
+			"backToProducts": "Back to Products"
+		},
+		"News": {
+			"title": "News & Articles",
+			"latestNews": "Latest News",
+			"noArticles": "No articles found"
+		},
+		"Contact": {
+			"title": "Contact Us",
+			"getInTouch": "Get in Touch",
+			"name": "Full Name",
+			"email": "Email Address",
+			"phone": "Phone Number",
+			"message": "Message",
+			"successMessage": "Thank you for your message. We will contact you soon.",
+			"errorMessage": "Failed to send message. Please try again.",
+			"namePlaceholder": "Enter your name",
+			"emailPlaceholder": "your.email@example.com",
+			"phonePlaceholder": "+84 xxx xxx xxx",
+			"messagePlaceholder": "Tell us about your inquiry...",
+			"characterCount": "{count}/1000 characters"
+		},
+		"Search": {
+			"title": "Search Results",
+			"placeholder": "Search products and articles...",
+			"noResults": "No results found for your search",
+			"resultsFor": "Results for",
+			"productsSection": "Products",
+			"articlesSection": "Articles",
+			"enterSearchQuery": "Enter a search query to find products and articles",
+			"tryDifferent": "Try different keywords or browse our categories"
+		}
 	}
 }

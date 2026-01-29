@@ -1,20 +1,41 @@
 {
-	"HomePage": {
-		"title": "Chào mừng đến với Công ty chúng tôi",
-		"subtitle": "Nhà sản xuất và Xuất khẩu hàng đầu",
-		"featuredProducts": "Sản phẩm nổi bật",
-		"viewAllProducts": "Xem tất cả sản phẩm",
-		"aboutSection": "Về chúng tôi",
-		"learnMore": "Tìm hiểu thêm",
-		"manufacturingFactorySize": "Quy mô nhà máy",
-		"manufacturingCapacity": "Công suất sản xuất",
-		"manufacturingLeadTimes": "Thời gian giao hàng",
-		"manufacturingLearnMore": "Tìm hiểu thêm về sản xuất",
-		"featuredArticles": "Tin tức & Bài viết mới nhất",
-		"viewAllArticles": "Xem tất cả bài viết",
+	"Common": {
+		"loading": "Đang tải...",
+		"error": "Đã xảy ra lỗi",
+		"notFound": "Không tìm thấy trang",
+		"backToHome": "Về trang chủ",
+		"searchPlaceholder": "Tìm kiếm sản phẩm và bài viết...",
 		"readMore": "Đọc thêm",
+		"viewDetails": "Xem chi tiết",
 		"publishedOn": "Xuất bản ngày",
-		"noFeaturedProductsAvailable": "Không có sản phẩm nổi bật"
+		"validationFailed": "Xác thực thất bại",
+		"internalServerError": "Lỗi hệ thống nội bộ"
+	},
+	"Actions": {
+		"submit": "Gửi",
+		"cancel": "Hủy",
+		"save": "Lưu",
+		"delete": "Xóa",
+		"edit": "Sửa",
+		"learnMore": "Tìm hiểu thêm",
+		"viewAll": "Xem tất cả",
+		"sendMessage": "Gửi tin nhắn",
+		"sending": "Đang gửi...",
+		"browseProducts": "Duyệt sản phẩm",
+		"browseArticles": "Duyệt bài viết"
+	},
+	"Validation": {
+		"required": "Vui lòng nhập {field}",
+		"minLength": "{field} phải có ít nhất {count} ký tự",
+		"maxLength": "{field} không được vượt quá {count} ký tự",
+		"invalidEmail": "Email không đúng định dạng",
+		"invalidPhone": "Số điện thoại không hợp lệ"
+	},
+	"Fields": {
+		"name": "Họ tên",
+		"email": "Email",
+		"phone": "Số điện thoại",
+		"message": "Lời nhắn"
 	},
 	"Navigation": {
 		"home": "Trang chủ",
@@ -30,81 +51,72 @@
 		"followUs": "Theo dõi chúng tôi",
 		"allRightsReserved": "Bảo lưu mọi quyền"
 	},
-	"AboutPage": {
-		"title": "Giới thiệu",
-		"ourVision": "Tầm nhìn",
-		"ourMission": "Sứ mệnh",
-		"coreValues": "Giá trị cốt lõi"
-	},
-	"ProductsPage": {
-		"title": "Sản phẩm của chúng tôi",
-		"allCategories": "Tất cả danh mục",
-		"filterByCategory": "Lọc theo danh mục",
-		"noProducts": "Không tìm thấy sản phẩm",
-		"viewDetails": "Xem chi tiết",
-		"bestSeller": "Bán chạy",
-		"featured": "Nổi bật"
-	},
-	"ProductDetail": {
-		"description": "Mô tả",
-		"specifications": "Thông số kỹ thuật",
-		"benefits": "Lợi ích",
-		"usageInstructions": "Hướng dẫn sử dụng",
-		"relatedProducts": "Sản phẩm liên quan",
-		"backToProducts": "Quay lại danh sách"
-	},
-	"ManufacturingPage": {
-		"title": "Năng lực sản xuất",
-		"metricsTitle": "Chỉ số cơ sở",
-		"factorySizeLabel": "Quy mô nhà máy",
-		"capacityLabel": "Công suất sản xuất",
-		"leadTimesLabel": "Thời gian giao hàng",
-		"certificationsTitle": "Chứng nhận & Tiêu chuẩn chất lượng",
-		"processesTitle": "Quy trình sản xuất",
-		"galleryTitle": "Hình ảnh nhà máy"
-	},
-	"NewsPage": {
-		"title": "Tin tức & Bài viết",
-		"latestNews": "Tin tức mới nhất",
-		"readMore": "Đọc thêm",
-		"noArticles": "Không tìm thấy bài viết",
-		"publishedOn": "Xuất bản ngày"
-	},
-	"ContactPage": {
-		"title": "Liên hệ",
-		"getInTouch": "Liên hệ với chúng tôi",
-		"name": "Họ và tên",
-		"email": "Địa chỉ email",
-		"phone": "Số điện thoại",
-		"message": "Lời nhắn",
-		"submit": "Gửi tin nhắn",
-		"successMessage": "Cảm ơn bạn đã liên hệ. Chúng tôi sẽ liên lạc sớm.",
-		"errorMessage": "Gửi tin nhắn thất bại. Vui lòng thử lại.",
-		"namePlaceholder": "Nhập họ tên",
-		"emailPlaceholder": "email@example.com",
-		"phonePlaceholder": "+84 xxx xxx xxx",
-		"messagePlaceholder": "Cho chúng tôi biết yêu cầu của bạn..."
-	},
-	"Common": {
-		"loading": "Đang tải...",
-		"error": "Đã xảy ra lỗi",
-		"notFound": "Không tìm thấy trang",
-		"backToHome": "Về trang chủ",
-		"searchPlaceholder": "Tìm kiếm sản phẩm và bài viết..."
-	},
-	"SearchPage": {
-		"title": "Kết quả tìm kiếm",
-		"placeholder": "Tìm kiếm sản phẩm và bài viết...",
-		"noResults": "Không tìm thấy kết quả cho tìm kiếm của bạn",
-		"resultsFor": "Kết quả cho",
-		"productsSection": "Sản phẩm",
-		"articlesSection": "Bài viết",
-		"enterSearchQuery": "Nhập từ khóa để tìm sản phẩm và bài viết",
-		"tryDifferent": "Thử từ khóa khác hoặc duyệt các danh mục của chúng tôi",
-		"browseProducts": "Duyệt sản phẩm",
-		"browseArticles": "Duyệt bài viết",
-		"viewDetails": "Xem chi tiết",
-		"readMore": "Đọc thêm",
-		"publishedOn": "Xuất bản ngày"
+	"Pages": {
+		"Home": {
+			"title": "Chào mừng đến với Công ty chúng tôi",
+			"subtitle": "Nhà sản xuất và Xuất khẩu hàng đầu",
+			"featuredProducts": "Sản phẩm nổi bật",
+			"viewAllProducts": "Xem tất cả sản phẩm",
+			"aboutSection": "Về chúng tôi",
+			"manufacturingFactorySize": "Quy mô nhà máy",
+			"manufacturingCapacity": "Công suất sản xuất",
+			"manufacturingLeadTimes": "Thời gian giao hàng",
+			"manufacturingLearnMore": "Tìm hiểu thêm về sản xuất",
+			"featuredArticles": "Tin tức & Bài viết mới nhất",
+			"viewAllArticles": "Xem tất cả bài viết",
+			"noFeaturedProductsAvailable": "Không có sản phẩm nổi bật"
+		},
+		"About": {
+			"title": "Giới thiệu",
+			"ourVision": "Tầm nhìn",
+			"ourMission": "Sứ mệnh",
+			"coreValues": "Giá trị cốt lõi"
+		},
+		"Products": {
+			"title": "Sản phẩm của chúng tôi",
+			"allCategories": "Tất cả danh mục",
+			"filterByCategory": "Lọc theo danh mục",
+			"noProducts": "Không tìm thấy sản phẩm",
+			"bestSeller": "Bán chạy",
+			"featured": "Nổi bật"
+		},
+		"ProductDetail": {
+			"description": "Mô tả",
+			"specifications": "Thông số kỹ thuật",
+			"benefits": "Lợi ích",
+			"usageInstructions": "Hướng dẫn sử dụng",
+			"relatedProducts": "Sản phẩm liên quan",
+			"backToProducts": "Quay lại danh sách"
+		},
+		"News": {
+			"title": "Tin tức & Bài viết",
+			"latestNews": "Tin tức mới nhất",
+			"noArticles": "Không tìm thấy bài viết"
+		},
+		"Contact": {
+			"title": "Liên hệ",
+			"getInTouch": "Liên hệ với chúng tôi",
+			"name": "Họ và tên",
+			"email": "Địa chỉ email",
+			"phone": "Số điện thoại",
+			"message": "Lời nhắn",
+			"successMessage": "Cảm ơn bạn đã liên hệ. Chúng tôi sẽ liên lạc sớm.",
+			"errorMessage": "Gửi tin nhắn thất bại. Vui lòng thử lại.",
+			"namePlaceholder": "Nhập họ tên",
+			"emailPlaceholder": "email@example.com",
+			"phonePlaceholder": "+84 xxx xxx xxx",
+			"messagePlaceholder": "Cho chúng tôi biết yêu cầu của bạn...",
+			"characterCount": "{count}/1000 ký tự"
+		},
+		"Search": {
+			"title": "Kết quả tìm kiếm",
+			"placeholder": "Tìm kiếm sản phẩm và bài viết...",
+			"noResults": "Không tìm thấy kết quả cho tìm kiếm của bạn",
+			"resultsFor": "Kết quả cho",
+			"productsSection": "Sản phẩm",
+			"articlesSection": "Bài viết",
+			"enterSearchQuery": "Nhập từ khóa để tìm sản phẩm và bài viết",
+			"tryDifferent": "Thử từ khóa khác hoặc duyệt các danh mục của chúng tôi"
+		}
 	}
 }

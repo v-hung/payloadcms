@@ -1,6 +1,7 @@
 import { cache } from "react";
-import { getPayloadClient } from "@/lib/payload-utils";
-import { LocaleType } from "@/lib/locale-utils";
+import { getPayloadClient } from "@/lib/server/payload";
+import { LocaleType } from "@/lib/utils/locale";
+import { getLocale } from "next-intl/server";
 
 /**
  * Get products with optional category filter
@@ -8,23 +9,22 @@ import { LocaleType } from "@/lib/locale-utils";
  */
 export const getProducts = cache(
   async ({
-    locale = "vi",
     categorySlug,
     featured,
     limit = 20,
     page = 1,
   }: {
-    locale?: LocaleType;
     categorySlug?: string;
     featured?: boolean;
     limit?: number;
     page?: number;
   }) => {
+    const locale = await getLocale();
     const payload = await getPayloadClient();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {
-      status: {
+      _status: {
         equals: "published",
       },
     };
@@ -74,7 +74,7 @@ export const getProductBySlug = cache(
         slug: {
           equals: slug,
         },
-        status: {
+        _status: {
           equals: "published",
         },
       },

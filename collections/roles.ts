@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
-import { generatePermissionFields } from "@/lib/permissions-fields";
-import { createSlugHook } from "@/lib/slug-utils";
+import { createSlugHook } from "@/lib/utils/slug";
+import { generatePermissionFields } from "@/lib/permissions/fields";
 
 /**
  * Roles Collection Configuration

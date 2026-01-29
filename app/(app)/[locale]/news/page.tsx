@@ -1,4 +1,4 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { getPosts } from "@/services";
 import { PostCard } from "@/components/content/post-card";
 import type { Metadata } from "next";
@@ -9,13 +9,8 @@ type Params = Promise<{
   locale: string;
 }>;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Params;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "NewsPage" });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Pages.News");
 
   return {
     title: t("title"),
@@ -25,19 +20,13 @@ export async function generateMetadata({
 
 export default async function NewsPage({ params }: { params: Params }) {
   const { locale } = await params;
-  setRequestLocale(locale);
 
   const postsData = await getPosts({
     locale: locale as LocaleType,
     limit: 12,
   });
 
-  const t = await getTranslations({ locale, namespace: "NewsPage" });
-
-  const translations = {
-    readMore: t("readMore"),
-    publishedOn: t("publishedOn"),
-  };
+  const t = await getTranslations("Pages.News");
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -46,7 +35,7 @@ export default async function NewsPage({ params }: { params: Params }) {
       {postsData.posts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {postsData.posts.map((post) => (
-            <PostCard key={post.id} post={post} translations={translations} />
+            <PostCard key={post.id} post={post} />
           ))}
         </div>
       ) : (

@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
-import { createCollectionAccess } from "../lib/permissions-utils";
-import { createSlugHook } from "../lib/slug-utils";
+import { createCollectionAccess } from "@/lib/permissions/utils";
+import { createSlugHook } from "../lib/utils/slug";
 
 /**
  * Products Collection Configuration
@@ -130,6 +130,10 @@ export const Products: CollectionConfig = {
               en: "Add option values here",
               vi: "Thêm các giá trị tùy chọn ở đây",
             },
+            initCollapsed: false,
+            components: {
+              RowLabel: "@/components/admin/ProductOptionValueRowLabel",
+            },
           },
           fields: [
             {
@@ -160,7 +164,7 @@ export const Products: CollectionConfig = {
           en: "2️⃣ Variants are auto-generated from options above. Update price, SKU, and inventory for each variant.",
           vi: "2️⃣ Biến thể được tự động tạo từ các tùy chọn bên trên. Cập nhật giá, SKU và tồn kho cho từng biến thể.",
         },
-        initCollapsed: false,
+        initCollapsed: true,
         isSortable: false,
         components: {
           Field: "@/components/admin/ProductVariantsFieldAutoGenerate",
@@ -176,6 +180,7 @@ export const Products: CollectionConfig = {
           localized: true,
           label: { en: "Variant Title", vi: "Tiêu đề biến thể" },
           admin: {
+            hidden: true,
             readOnly: true,
             description: {
               en: '✅ Auto-generated from selected options (e.g., "Red / Small")',
@@ -191,6 +196,7 @@ export const Products: CollectionConfig = {
           required: true,
           label: { en: "Selected Options", vi: "Tùy chọn đã chọn" },
           admin: {
+            hidden: true,
             readOnly: true,
             description: {
               en: "Selected option values for this variant",
@@ -317,7 +323,10 @@ export const Products: CollectionConfig = {
           type: "checkbox",
           defaultValue: true,
           admin: {
-            description: "Make this variant available for purchase",
+            description: {
+              en: "Is this variant available for purchase?",
+              vi: "Biến thể này có sẵn để mua không?",
+            },
           },
         },
       ],
@@ -442,23 +451,6 @@ export const Products: CollectionConfig = {
           en: "Sort order for featured products on home page (lower numbers appear first)",
           vi: "Thứ tự sắp xếp cho sản phẩm nổi bật trên trang chủ (số nhỏ hơn hiển thị trước)",
         },
-      },
-    },
-
-    // Publishing Settings
-    {
-      name: "status",
-      type: "select",
-      required: true,
-      defaultValue: "draft",
-      options: [
-        { label: { en: "Draft", vi: "Bản nháp" }, value: "draft" },
-        { label: { en: "Published", vi: "Đã xuất bản" }, value: "published" },
-        { label: { en: "Archived", vi: "Đã lưu trữ" }, value: "archived" },
-      ],
-      label: { en: "Status", vi: "Trạng thái" },
-      admin: {
-        position: "sidebar",
       },
     },
 

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 
-import { getLocales, switchLocale, type LocaleType } from "@/lib/locale-utils";
+import { getLocales, switchLocale, type LocaleType } from "@/lib/utils/locale";
 
 export function useLanguageSwitcher() {
   const activeLocale = useLocale() as LocaleType;

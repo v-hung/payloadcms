@@ -1,27 +1,15 @@
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import {
-  getCompanyInfo,
-  getProducts,
-  getManufacturingInfo,
-  getPosts,
-} from "@/services";
+import { getCompanyInfo, getProducts, getPosts } from "@/services";
 import { ProductCard } from "@/components/product/product-card";
 import { PostCard } from "@/components/content/post-card";
 import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 
-type LocaleType = "en" | "vi";
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const companyInfo = await getCompanyInfo(locale as LocaleType);
-  const t = await getTranslations({ locale, namespace: "HomePage" });
+export async function generateMetadata(): Promise<Metadata> {
+  const companyInfo = await getCompanyInfo();
+  const t = await getTranslations("Pages.Home");
 
   return {
     title: companyInfo.companyName || t("title"),
@@ -29,38 +17,19 @@ export async function generateMetadata({
   };
 }
 
-export default async function Home({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const [companyInfo, productsData, manufacturing, postsData] =
-    await Promise.all([
-      getCompanyInfo(locale as LocaleType),
-      getProducts({ locale: locale as LocaleType, featured: true, limit: 6 }),
-      getManufacturingInfo(locale as LocaleType),
-      getPosts({
-        locale: locale as LocaleType,
-        featured: true,
-        limit: 3,
-      }),
-    ]);
-  const t = await getTranslations({ locale, namespace: "HomePage" });
+export default async function Home() {
+  const [companyInfo, productsData, postsData] = await Promise.all([
+    getCompanyInfo(),
+    getProducts({ featured: true, limit: 6 }),
+    getPosts({
+      featured: true,
+      limit: 3,
+    }),
+  ]);
+  const t = await getTranslations();
 
   const featuredProducts = productsData.products;
   const featuredPosts = postsData.posts;
-
-  const productTranslations = {
-    viewDetails: t("viewAllProducts"),
-    featured: "Featured",
-    bestSeller: "Best Seller",
-  };
-
-  const postTranslations = {
-    readMore: t("readMore"),
-    publishedOn: t("publishedOn"),
-  };
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -85,7 +54,7 @@ export default async function Home({
 
         {/* Company Name */}
         <h1 className="text-4xl md:text-6xl font-bold mb-4">
-          {companyInfo.companyName || t("title")}
+          {companyInfo.companyName || t("Pages.Home.title")}
         </h1>
 
         {/* Tagline */}
@@ -114,17 +83,13 @@ export default async function Home({
       {/* Featured Products Section */}
       <section className="mb-16">
         <h2 className="text-3xl font-bold text-center mb-8">
-          {t("featuredProducts")}
+          {t("Pages.Home.featuredProducts")}
         </h2>
         {featuredProducts.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {featuredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  translations={productTranslations}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
             <div className="text-center">
@@ -132,90 +97,26 @@ export default async function Home({
                 href="/products"
                 className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
               >
-                {t("viewAllProducts")}
+                {t("Pages.Home.viewAllProducts")}
               </Link>
             </div>
           </>
         ) : (
           <p className="text-center text-muted-foreground">
-            {t("noFeaturedProductsAvailable")}
+            {t("Pages.Home.noFeaturedProductsAvailable")}
           </p>
         )}
       </section>
-
-      {/* Manufacturing Capability Highlight */}
-      {manufacturing && (
-        <section className="mb-16 bg-muted/50 p-8 rounded-lg">
-          <h2 className="text-3xl font-bold text-center mb-6">
-            {manufacturing.headline}
-          </h2>
-          {manufacturing.description && (
-            <div className="max-w-3xl mx-auto text-center mb-6">
-              <p className="text-lg text-muted-foreground line-clamp-3">
-                {convertLexicalToHTML({ data: manufacturing.description })}
-              </p>
-            </div>
-          )}
-          {(manufacturing.factorySize ||
-            manufacturing.productionCapacity ||
-            manufacturing.leadTimes) && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-4xl mx-auto">
-              {manufacturing.factorySize && (
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground mb-1">
-                    {t("manufacturingFactorySize")}
-                  </div>
-                  <div className="text-2xl font-bold">
-                    {manufacturing.factorySize}
-                  </div>
-                </div>
-              )}
-              {manufacturing.productionCapacity && (
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground mb-1">
-                    {t("manufacturingCapacity")}
-                  </div>
-                  <div className="text-2xl font-bold">
-                    {manufacturing.productionCapacity}
-                  </div>
-                </div>
-              )}
-              {manufacturing.leadTimes && (
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground mb-1">
-                    {t("manufacturingLeadTimes")}
-                  </div>
-                  <div className="text-2xl font-bold">
-                    {manufacturing.leadTimes}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          <div className="text-center">
-            <Link
-              href="/manufacturing"
-              className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              {t("manufacturingLearnMore")}
-            </Link>
-          </div>
-        </section>
-      )}
 
       {/* Featured Articles Section */}
       {featuredPosts.length > 0 && (
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-8">
-            {t("featuredArticles")}
+            {t("Pages.Home.featuredArticles")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {featuredPosts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                translations={postTranslations}
-              />
+              <PostCard key={post.id} post={post} />
             ))}
           </div>
           <div className="text-center">
@@ -223,7 +124,7 @@ export default async function Home({
               href="/news"
               className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             >
-              {t("viewAllArticles")}
+              {t("Pages.Home.viewAllArticles")}
             </Link>
           </div>
         </section>
@@ -231,12 +132,14 @@ export default async function Home({
 
       {/* About Section */}
       <section className="text-center">
-        <h2 className="text-3xl font-bold mb-4">{t("aboutSection")}</h2>
+        <h2 className="text-3xl font-bold mb-4">
+          {t("Pages.Home.aboutSection")}
+        </h2>
         <Link
           href="/about"
           className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
         >
-          {t("learnMore")}
+          {t("Actions.learnMore")}
         </Link>
       </section>
     </div>

@@ -13,8 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CompanyInfo } from "@/types/payload-types";
-import { getMediaUrl } from "@/lib/media-utils";
+import { CompanyInfo } from "@/types/payload";
+import { getMediaUrl, isMediaObject } from "@/lib/utils/media";
 
 const navLinks = [
   { key: "home", href: "/" },
@@ -26,8 +26,7 @@ const navLinks = [
 ] as const;
 
 export function Header({ companyInfo }: { companyInfo: CompanyInfo }) {
-  const t = useTranslations("Navigation");
-  const tCommon = useTranslations("Common");
+  const t = useTranslations();
   const pathname = usePathname();
   const { currentLocale, availableLocales, changeLanguage } =
     useLanguageSwitcher();
@@ -44,14 +43,16 @@ export function Header({ companyInfo }: { companyInfo: CompanyInfo }) {
       <div className="container mx-auto px-4 flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <Image
-            src={getMediaUrl(companyInfo.logo)}
-            alt={companyInfo.companyName || "Logo"}
-            width={40}
-            height={40}
-            className="h-10 w-10 object-contain"
-            priority
-          />
+          {isMediaObject(companyInfo.logo) && (
+            <Image
+              src={getMediaUrl(companyInfo.logo)}
+              alt={companyInfo.companyName || "Logo"}
+              width={40}
+              height={40}
+              className="h-10 w-10 object-contain"
+              priority
+            />
+          )}
           <span className="text-lg font-semibold">
             {companyInfo.companyName || "Company"}
           </span>
@@ -67,7 +68,7 @@ export function Header({ companyInfo }: { companyInfo: CompanyInfo }) {
                 isActive(href) ? "text-foreground" : "text-muted-foreground"
               }`}
             >
-              {t(key)}
+              {t(`Navigation.${key}`)}
             </Link>
           ))}
         </nav>
@@ -75,7 +76,7 @@ export function Header({ companyInfo }: { companyInfo: CompanyInfo }) {
         {/* Search and Language Switcher */}
         <div className="flex items-center gap-4">
           <div className="hidden md:block w-64">
-            <SearchBar placeholder={tCommon("searchPlaceholder")} />
+            <SearchBar placeholder={t("Common.searchPlaceholder")} />
           </div>
           <Select value={currentLocale.code} onValueChange={changeLanguage}>
             <SelectTrigger className="w-auto border-none bg-transparent text-sm font-medium transition-colors hover:text-primary">

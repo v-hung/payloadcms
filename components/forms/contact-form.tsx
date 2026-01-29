@@ -1,222 +1,207 @@
 "use client";
 
-import { useState } from "react";
+import * as React from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  message: string;
-}
-
-interface FormErrors {
-  name?: string;
-  email?: string;
-  phone?: string;
-  message?: string;
-}
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@/components/ui/input-group";
+import { submitContactForm } from "@/action/contact";
+import {
+  createContactFormSchema,
+  type ContactFormData,
+} from "@/lib/schemas/contact";
+import { useClientSchema } from "@/lib/utils/validation";
 
 export function ContactForm() {
-  const t = useTranslations("ContactPage");
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
+  const t = useTranslations();
+
+  // Create localized schema using validation utils
+  const contactFormSchema = useClientSchema(createContactFormSchema);
+
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    },
   });
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(
-    null,
-  );
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
+  async function onSubmit(data: ContactFormData) {
+    const result = await submitContactForm(data);
 
-    // Name validation (min 2 characters)
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
+    if (result.success) {
+      toast.success(t("Pages.Contact.successMessage"));
+      form.reset();
+    } else {
+      toast.error(result.error || t("Pages.Contact.errorMessage"));
     }
-
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    // Phone validation (min 10 characters)
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone is required";
-    } else if (formData.phone.trim().length < 10) {
-      newErrors.phone = "Phone must be at least 10 characters";
-    }
-
-    // Message validation (min 10 characters)
-    if (!formData.message.trim()) {
-      newErrors.message = "Message is required";
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Message must be at least 10 characters";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitStatus(null);
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setSubmitStatus("success");
-        setFormData({ name: "", email: "", phone: "", message: "" });
-        setErrors({});
-      } else {
-        setSubmitStatus("error");
-      }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setSubmitStatus("error");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error for this field when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
+  }
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name Field */}
-          <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">
-              {t("name")} <span className="text-destructive">*</span>
-            </label>
-            <Input
-              id="name"
+      <CardHeader>
+        <CardTitle>{t("Pages.Contact.title")}</CardTitle>
+        <CardDescription>{t("Pages.Contact.getInTouch")}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form id="contact-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup>
+            {/* Name Field */}
+            <Controller
               name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder={t("namePlaceholder")}
-              className={errors.name ? "border-destructive" : ""}
-              disabled={isSubmitting}
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="contact-form-name">
+                    {t("Pages.Contact.name")}{" "}
+                    <span className="text-destructive">*</span>
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="contact-form-name"
+                    aria-invalid={fieldState.invalid}
+                    placeholder={t("Pages.Contact.namePlaceholder")}
+                    autoComplete="name"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name}</p>
-            )}
-          </div>
 
-          {/* Email Field */}
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
-              {t("email")} <span className="text-destructive">*</span>
-            </label>
-            <Input
-              id="email"
+            {/* Email Field */}
+            <Controller
               name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder={t("emailPlaceholder")}
-              className={errors.email ? "border-destructive" : ""}
-              disabled={isSubmitting}
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="contact-form-email">
+                    {t("Pages.Contact.email")}{" "}
+                    <span className="text-destructive">*</span>
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="contact-form-email"
+                    type="email"
+                    aria-invalid={fieldState.invalid}
+                    placeholder={t("Pages.Contact.emailPlaceholder")}
+                    autoComplete="email"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
-          </div>
 
-          {/* Phone Field */}
-          <div className="space-y-2">
-            <label htmlFor="phone" className="text-sm font-medium">
-              {t("phone")} <span className="text-destructive">*</span>
-            </label>
-            <Input
-              id="phone"
+            {/* Phone Field */}
+            <Controller
               name="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder={t("phonePlaceholder")}
-              className={errors.phone ? "border-destructive" : ""}
-              disabled={isSubmitting}
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="contact-form-phone">
+                    {t("Pages.Contact.phone")}{" "}
+                    <span className="text-destructive">*</span>
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="contact-form-phone"
+                    type="tel"
+                    aria-invalid={fieldState.invalid}
+                    placeholder={t("Pages.Contact.phonePlaceholder")}
+                    autoComplete="tel"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
-            {errors.phone && (
-              <p className="text-sm text-destructive">{errors.phone}</p>
-            )}
-          </div>
 
-          {/* Message Field */}
-          <div className="space-y-2">
-            <label htmlFor="message" className="text-sm font-medium">
-              {t("message")} <span className="text-destructive">*</span>
-            </label>
-            <Textarea
-              id="message"
+            {/* Message Field */}
+            <Controller
               name="message"
-              value={formData.message}
-              onChange={handleChange}
-              placeholder={t("messagePlaceholder")}
-              className={errors.message ? "border-destructive" : ""}
-              disabled={isSubmitting}
-              rows={5}
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="contact-form-message">
+                    {t("Pages.Contact.message")}{" "}
+                    <span className="text-destructive">*</span>
+                  </FieldLabel>
+                  <InputGroup>
+                    <InputGroupTextarea
+                      {...field}
+                      id="contact-form-message"
+                      placeholder={t("Pages.Contact.messagePlaceholder")}
+                      rows={6}
+                      className="min-h-32 resize-none"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    <InputGroupAddon align="block-end">
+                      <InputGroupText className="tabular-nums">
+                        {t("Pages.Contact.characterCount", {
+                          count: field.value.length,
+                        })}
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  </InputGroup>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
             />
-            {errors.message && (
-              <p className="text-sm text-destructive">{errors.message}</p>
-            )}
-          </div>
-
-          {/* Success/Error Messages */}
-          {submitStatus === "success" && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-              <p className="text-green-800">{t("successMessage")}</p>
-            </div>
-          )}
-          {submitStatus === "error" && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-800">{t("errorMessage")}</p>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Sending..." : t("submit")}
-          </Button>
+          </FieldGroup>
         </form>
       </CardContent>
+      <CardFooter>
+        <Field orientation="horizontal" className="w-full">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => form.reset()}
+            disabled={form.formState.isSubmitting}
+          >
+            {t("Actions.cancel")}
+          </Button>
+          <Button
+            type="submit"
+            form="contact-form"
+            disabled={form.formState.isSubmitting}
+            className="flex-1"
+          >
+            {form.formState.isSubmitting
+              ? t("Actions.sending")
+              : t("Actions.sendMessage")}
+          </Button>
+        </Field>
+      </CardFooter>
     </Card>
   );
 }

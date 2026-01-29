@@ -1,6 +1,8 @@
 import { cache } from "react";
-import { getPayloadClient } from "@/lib/payload-utils";
-import { LocaleType } from "@/lib/locale-utils";
+import { getPayloadClient } from "@/lib/server/payload";
+import { LocaleType } from "@/lib/utils/locale";
+import { getLocale } from "next-intl/server";
+import { Where } from "payload";
 
 /**
  * Get published posts/articles
@@ -8,21 +10,19 @@ import { LocaleType } from "@/lib/locale-utils";
  */
 export const getPosts = cache(
   async ({
-    locale = "vi",
     featured,
     limit = 10,
     page = 1,
   }: {
-    locale?: LocaleType;
     featured?: boolean;
     limit?: number;
     page?: number;
   }) => {
+    const locale = await getLocale();
     const payload = await getPayloadClient();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {
-      status: {
+    const where: Where = {
+      _status: {
         equals: "published",
       },
     };
@@ -66,7 +66,7 @@ export const getPostBySlug = cache(
         slug: {
           equals: slug,
         },
-        status: {
+        _status: {
           equals: "published",
         },
       },

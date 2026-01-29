@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useField, Button, FieldLabel } from "@payloadcms/ui";
 import type { ArrayFieldClientProps } from "payload";
-import type { Product } from "@/types/payload-types";
+import type { Product } from "@/types/payload";
 import { GripVertical } from "lucide-react";
 
 type OptionValue = NonNullable<Product["options"]>[number]["values"][number];

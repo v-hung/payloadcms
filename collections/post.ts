@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
-import { createCollectionAccess } from "../lib/permissions-utils";
-import { createSlugHook } from "../lib/slug-utils";
+import { createCollectionAccess } from "@/lib/permissions/utils";
+import { createSlugHook } from "../lib/utils/slug";
 
 /**
  * Posts Collection Configuration
@@ -83,22 +83,6 @@ export const Posts: CollectionConfig = {
       },
     },
 
-    // Publishing Settings
-    {
-      name: "status",
-      type: "select",
-      required: true,
-      defaultValue: "draft",
-      options: [
-        { label: { en: "Draft", vi: "Bản nháp" }, value: "draft" },
-        { label: { en: "Published", vi: "Đã xuất bản" }, value: "published" },
-        { label: { en: "Archived", vi: "Đã lưu trữ" }, value: "archived" },
-      ],
-      label: { en: "Status", vi: "Trạng thái" },
-      admin: {
-        position: "sidebar",
-      },
-    },
     {
       name: "publishedAt",
       type: "date",

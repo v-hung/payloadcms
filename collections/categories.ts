@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
-import { createCollectionAccess } from "../lib/permissions-utils";
-import { createSlugHook } from "../lib/slug-utils";
+import { createCollectionAccess } from "@/lib/permissions/utils";
+import { createSlugHook } from "../lib/utils/slug";
 
 /**
  * Categories Collection Configuration
@@ -90,20 +90,6 @@ export const Categories: CollectionConfig = {
         },
       },
     },
-    {
-      name: "status",
-      type: "select",
-      required: true,
-      defaultValue: "active",
-      options: [
-        { label: { en: "Active", vi: "Hoạt động" }, value: "active" },
-        { label: { en: "Inactive", vi: "Không hoạt động" }, value: "inactive" },
-      ],
-      label: { en: "Status", vi: "Trạng thái" },
-      admin: {
-        position: "sidebar",
-      },
-    },
 
     // SEO Fields
     {
@@ -136,4 +122,9 @@ export const Categories: CollectionConfig = {
 
   // Timestamps
   timestamps: true,
+
+  // Versions
+  versions: {
+    drafts: true,
+  },
 };

@@ -11,7 +11,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "ContactPage" });
+  const t = await getTranslations("Pages.Contact");
   const companyInfo = await getCompanyInfo(locale as LocaleType);
 
   return {
@@ -27,7 +27,7 @@ export default async function ContactPage({
 }) {
   const { locale } = await params;
   const companyInfo = await getCompanyInfo(locale as LocaleType);
-  const t = await getTranslations({ locale, namespace: "ContactPage" });
+  const t = await getTranslations("Pages.Contact");
 
   return (
     <div className="container mx-auto px-4 py-12">

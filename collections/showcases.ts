@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
-import { createCollectionAccess } from "../lib/permissions-utils";
-import { createSlugHook } from "../lib/slug-utils";
+import { createCollectionAccess } from "@/lib/permissions/utils";
+import { createSlugHook } from "../lib/utils/slug";
 
 /**
  * Showcases Collection Configuration
@@ -121,23 +121,6 @@ export const Showcases: CollectionConfig = {
       },
     },
 
-    // Publishing Settings
-    {
-      name: "status",
-      type: "select",
-      required: true,
-      defaultValue: "draft",
-      options: [
-        { label: { en: "Draft", vi: "Bản nháp" }, value: "draft" },
-        { label: { en: "Published", vi: "Đã xuất bản" }, value: "published" },
-        { label: { en: "Archived", vi: "Đã lưu trữ" }, value: "archived" },
-      ],
-      label: { en: "Status", vi: "Trạng thái" },
-      admin: {
-        position: "sidebar",
-      },
-    },
-
     // Featured Settings
     {
       name: "featured",
@@ -234,48 +217,13 @@ export const Showcases: CollectionConfig = {
         },
       },
     },
-
-    // Metadata
-    {
-      name: "createdAt",
-      type: "date",
-      admin: {
-        position: "sidebar",
-        readOnly: true,
-        date: {
-          pickerAppearance: "dayAndTime",
-        },
-      },
-      label: { en: "Created At", vi: "Ngày tạo" },
-      hooks: {
-        beforeChange: [
-          ({ value, operation }) => {
-            if (operation === "create" && !value) {
-              return new Date();
-            }
-            return value;
-          },
-        ],
-      },
-    },
-    {
-      name: "updatedAt",
-      type: "date",
-      admin: {
-        position: "sidebar",
-        readOnly: true,
-        date: {
-          pickerAppearance: "dayAndTime",
-        },
-      },
-      label: { en: "Updated At", vi: "Ngày cập nhật" },
-      hooks: {
-        beforeChange: [
-          () => {
-            return new Date();
-          },
-        ],
-      },
-    },
   ],
+
+  // Timestamps
+  timestamps: true,
+
+  // Versions
+  versions: {
+    drafts: true,
+  },
 };

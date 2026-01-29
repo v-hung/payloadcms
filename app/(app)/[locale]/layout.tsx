@@ -1,10 +1,10 @@
 import { NextIntlClientProvider } from "next-intl";
-import { Inter, Noto_Sans_JP } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Header } from "@/components/navigation/header";
 import { Footer } from "@/components/navigation/footer";
 import "./globals.css";
 import { getCompanyInfo } from "@/services";
-import { LocaleType } from "@/lib/locale-utils";
+import { LocaleType } from "@/lib/utils/locale";
 
 const inter = Inter({
   subsets: ["vietnamese"],
@@ -28,7 +28,7 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
 
-  const companyInfo = await getCompanyInfo(locale);
+  const companyInfo = await getCompanyInfo();
 
   return (
     <html lang={locale}>

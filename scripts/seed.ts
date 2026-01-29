@@ -1,5 +1,5 @@
+import { ROLE_PERMISSIONS_CONFIG } from "@/lib/permissions/config";
 import type { Payload } from "payload";
-import { ROLE_PERMISSIONS_CONFIG } from "../lib/permissions-config";
 
 interface RoleSeed {
   slug: string;
@@ -66,7 +66,16 @@ export const seed = async (payload: Payload): Promise<void> => {
         ];
       const permissionsArray = Object.entries(permissionsConfig).map(
         ([collection, actions]) => ({
-          collection: collection as "users" | "posts" | "pages" | "showcases" | "categories" | "products" | "carts" | "orders" | "media",
+          collection: collection as
+            | "users"
+            | "posts"
+            | "pages"
+            | "showcases"
+            | "categories"
+            | "products"
+            | "carts"
+            | "orders"
+            | "media",
           ...(actions as Record<string, boolean>),
         }),
       );

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { createCollectionAccess } from "../lib/permissions-utils";
+import { createCollectionAccess } from "@/lib/permissions/utils";
 
 /**
  * Orders Collection Configuration

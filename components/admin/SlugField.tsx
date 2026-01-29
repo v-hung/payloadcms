@@ -7,7 +7,7 @@ import {
   useFormFields,
   useTranslation,
 } from "@payloadcms/ui";
-import { generateSlug } from "@/lib/slug-utils";
+import { generateSlug } from "@/lib/utils/slug";
 import { TextFieldClientProps } from "payload";
 import {
   PayloadTranslationsKeys,

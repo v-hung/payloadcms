@@ -1,6 +1,6 @@
 "use client";
 
-import { PERMISSION_COLLECTIONS } from "@/lib/permissions-config";
+import { PERMISSION_COLLECTIONS } from "@/lib/permissions/config";
 import { useRowLabel } from "@payloadcms/ui";
 
 export const PermissionsRowLabel = () => {

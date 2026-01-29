@@ -4,17 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Post } from "@/payload-types";
+import { useTranslations } from "next-intl";
+import { Post } from "@/types/payload";
 
 interface PostCardProps {
   post: Post;
-  translations: {
-    readMore: string;
-    publishedOn: string;
-  };
 }
 
-export function PostCard({ post, translations }: PostCardProps) {
+export function PostCard({ post }: PostCardProps) {
+  const t = useTranslations("Common");
+
   const featuredImage =
     post.featuredImage &&
     typeof post.featuredImage === "object" &&
@@ -51,7 +50,7 @@ export function PostCard({ post, translations }: PostCardProps) {
         </CardTitle>
         {publishDate && (
           <p className="text-sm text-muted-foreground">
-            {translations.publishedOn} {publishDate}
+            {t("publishedOn")} {publishDate}
           </p>
         )}
       </CardHeader>
@@ -65,7 +64,7 @@ export function PostCard({ post, translations }: PostCardProps) {
           href={`/news/${post.slug}`}
           className="text-primary hover:underline font-medium"
         >
-          {translations.readMore} →
+          {t("readMore")} →
         </Link>
       </CardContent>
     </Card>

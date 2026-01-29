@@ -1,24 +1,17 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { ProductCard } from "./product-card";
-import type { Product } from "@/payload-types";
+import type { Product } from "@/types/payload";
 
 interface ProductGridProps {
   products: Product[];
-  translations: {
-    viewDetails: string;
-    featured: string;
-    bestSeller: string;
-    noProducts: string;
-  };
   selectedCategory?: string | null;
 }
 
-export function ProductGrid({
-  products,
-  translations,
-  selectedCategory,
-}: ProductGridProps) {
+export function ProductGrid({ products, selectedCategory }: ProductGridProps) {
+  const t = useTranslations();
+
   // Filter products by selected category
   const filteredProducts =
     selectedCategory && selectedCategory !== "all"
@@ -38,7 +31,7 @@ export function ProductGrid({
   if (filteredProducts.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
-        {translations.noProducts}
+        {t("Pages.Products.noProducts")}
       </div>
     );
   }
@@ -46,11 +39,7 @@ export function ProductGrid({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {filteredProducts.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          translations={translations}
-        />
+        <ProductCard key={product.id} product={product} />
       ))}
     </div>
   );

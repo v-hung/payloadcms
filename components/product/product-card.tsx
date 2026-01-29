@@ -7,28 +7,24 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import type { Product } from "@/payload-types";
+import type { Product } from "@/types/payload";
+import { useTranslations } from "next-intl";
+import { getMediaUrl } from "@/lib/utils/media";
 
 interface ProductCardProps {
   product: Product;
-  translations: {
-    viewDetails: string;
-    featured: string;
-    bestSeller: string;
-  };
 }
 
-export function ProductCard({ product, translations }: ProductCardProps) {
+export function ProductCard({ product }: ProductCardProps) {
+  const t = useTranslations();
+
   // Get first image
   const firstImage =
     Array.isArray(product.images) && product.images.length > 0
       ? product.images[0]
       : null;
 
-  const imageUrl =
-    firstImage && typeof firstImage === "object" && "url" in firstImage
-      ? firstImage.url
-      : null;
+  const imageUrl = getMediaUrl(firstImage);
 
   return (
     <Card className="h-full flex flex-col hover:shadow-lg transition-shadow">
@@ -56,10 +52,10 @@ export function ProductCard({ product, translations }: ProductCardProps) {
         {/* Badges */}
         <div className="flex gap-2 mb-2">
           {product.featured && (
-            <Badge variant="default">{translations.featured}</Badge>
+            <Badge variant="default">{t("Pages.Products.featured")}</Badge>
           )}
           {product.bestSeller && (
-            <Badge variant="secondary">{translations.bestSeller}</Badge>
+            <Badge variant="secondary">{t("Pages.Products.bestSeller")}</Badge>
           )}
         </div>
 
@@ -83,7 +79,7 @@ export function ProductCard({ product, translations }: ProductCardProps) {
           href={`/products/${product.slug}`}
           className="text-sm text-primary hover:underline font-medium"
         >
-          {translations.viewDetails} →
+          {t("Common.viewDetails")} →
         </Link>
       </CardFooter>
     </Card>

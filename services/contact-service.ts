@@ -1,4 +1,4 @@
-import { getPayloadClient } from "@/lib/payload-utils";
+import { getPayloadClient } from "@/lib/server/payload";
 
 /**
  * Submit contact inquiry form

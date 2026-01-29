@@ -1,4 +1,4 @@
-import { createCollectionAccess } from "@/lib/permissions-utils";
+import { createCollectionAccess } from "@/lib/permissions/utils";
 import type { CollectionConfig } from "payload";
 
 /**
@@ -160,26 +160,4 @@ export const Users: CollectionConfig = {
 
   // Timestamps
   timestamps: true,
-
-  // Hooks
-  hooks: {
-    beforeLogin: [
-      async ({ user }) => {
-        // Update last login timestamp
-        if (user) {
-          user.lastLogin = new Date();
-        }
-        return user;
-      },
-    ],
-    beforeChange: [
-      async ({ data, req, operation }) => {
-        // Set verified to true when user verifies email
-        if (operation === "update" && req.context?.verified) {
-          data.verified = true;
-        }
-        return data;
-      },
-    ],
-  },
 };

@@ -13,8 +13,7 @@ const navigationLinks = [
 ] as const;
 
 export function Footer() {
-  const tNav = useTranslations("Navigation");
-  const tFooter = useTranslations("Footer");
+  const t = useTranslations();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -24,7 +23,7 @@ export function Footer() {
           {/* Company Info */}
           <div>
             <h3 className="text-lg font-semibold mb-4">
-              {tFooter("companyInfo")}
+              {t("Footer.companyInfo")}
             </h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>Company Name</p>
@@ -37,7 +36,7 @@ export function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="text-lg font-semibold mb-4">
-              {tFooter("quickLinks")}
+              {t("Footer.quickLinks")}
             </h3>
             <nav className="flex flex-col gap-2">
               {navigationLinks.map(({ key, href }) => (
@@ -46,7 +45,7 @@ export function Footer() {
                   href={href}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {tNav(key)}
+                  {t(`Navigation.${key}`)}
                 </Link>
               ))}
             </nav>
@@ -55,7 +54,7 @@ export function Footer() {
           {/* Social Media */}
           <div>
             <h3 className="text-lg font-semibold mb-4">
-              {tFooter("followUs")}
+              {t("Footer.followUs")}
             </h3>
             <div className="flex gap-4">
               {/* Social media links will be populated from CMS */}
@@ -80,7 +79,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
           <p>
-            © {currentYear} Company Name. {tFooter("allRightsReserved")}.
+            © {currentYear} Company Name. {t("Footer.allRightsReserved")}.
           </p>
         </div>
       </div>

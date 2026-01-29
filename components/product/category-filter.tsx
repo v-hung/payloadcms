@@ -1,23 +1,22 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Category } from "@/payload-types";
+import type { Category } from "@/types/payload";
+import { useTranslations } from "next-intl";
 
 interface CategoryFilterProps {
   categories: Category[];
   selectedCategory: string;
   onCategoryChange: (categorySlug: string) => void;
-  translations: {
-    allCategories: string;
-  };
 }
 
 export function CategoryFilter({
   categories,
   selectedCategory,
   onCategoryChange,
-  translations,
 }: CategoryFilterProps) {
+  const t = useTranslations();
+
   return (
     <Tabs
       value={selectedCategory}
@@ -26,7 +25,7 @@ export function CategoryFilter({
     >
       <TabsList className="w-full justify-start flex-wrap h-auto">
         <TabsTrigger value="all" className="mb-2">
-          {translations.allCategories}
+          {t("Pages.Products.allCategories")}
         </TabsTrigger>
         {categories.map((category) => (
           <TabsTrigger

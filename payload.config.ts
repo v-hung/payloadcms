@@ -10,27 +10,27 @@ const __dirname = path.dirname(__filename);
 import { en } from "@payloadcms/translations/languages/en";
 import { vi } from "@payloadcms/translations/languages/vi";
 
-import localization from "./i18n/localization";
+import localization from "@/i18n/localization";
 
-import { Posts } from "./collections/post";
-import { Pages } from "./collections/pages";
-import { Showcases } from "./collections/showcases";
-import { Categories } from "./collections/categories";
-import { Products } from "./collections/products";
-import { Carts } from "./collections/carts";
-import { CartItems } from "./collections/cart-items";
-import { Orders } from "./collections/orders";
-import { OrderItems } from "./collections/order-items";
-import { Wishlists } from "./collections/wishlists";
-import { ContactInquiries } from "./collections/contact-inquiries";
-import { Media } from "./collections/media";
-import { Admin } from "./collections/admin";
-import { Roles } from "./collections/roles";
-import { Users } from "./collections/users";
+import { Posts } from "@/collections/post";
+import { Pages } from "@/collections/pages";
+import { Showcases } from "@/collections/showcases";
+import { Categories } from "@/collections/categories";
+import { Products } from "@/collections/products";
+import { Carts } from "@/collections/carts";
+import { CartItems } from "@/collections/cart-items";
+import { Orders } from "@/collections/orders";
+import { OrderItems } from "@/collections/order-items";
+import { Wishlists } from "@/collections/wishlists";
+import { ContactInquiries } from "@/collections/contact-inquiries";
+import { Media } from "@/collections/media";
+import { Admin } from "@/collections/admin";
+import { Roles } from "@/collections/roles";
+import { Users } from "@/collections/users";
 
-import { CompanyInfo } from "./globals/company-info";
-import { lexicalEditorConfig } from "./lib/lexical-editor-utils";
-import { payloadTranslations } from "./i18n/payload-translations";
+import { CompanyInfo } from "@/globals/company-info";
+import { lexicalEditorConfig } from "@/lib/lexical-editor";
+import { payloadTranslations } from "@/i18n/payload-translations";
 
 export default buildConfig({
   // Rich Text Editor
@@ -93,7 +93,7 @@ export default buildConfig({
   // Seed script to populate initial data
   onInit: async (payload) => {
     if (process.env.NODE_ENV === "development") {
-      await import("./scripts/seed").then(({ seed }) => seed(payload));
+      await import("@/scripts/seed").then(({ seed }) => seed(payload));
     }
   },
 

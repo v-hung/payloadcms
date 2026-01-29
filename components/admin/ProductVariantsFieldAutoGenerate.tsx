@@ -3,8 +3,8 @@
 import React, { useEffect, useRef } from "react";
 import { useField, ArrayField, useAllFormFields } from "@payloadcms/ui";
 import type { ArrayFieldClientComponent } from "payload";
-import type { Product } from "@/types/payload-types";
-import { generateVariantsFromOptions } from "@/lib/product-variant-utils";
+import type { Product } from "@/types/payload";
+import { generateVariantsFromOptions } from "@/lib/utils/product-variant";
 
 type ProductOption = NonNullable<Product["options"]>[number];
 type ProductVariant = NonNullable<Product["variants"]>[number];

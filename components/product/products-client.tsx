@@ -4,29 +4,22 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CategoryFilter } from "@/components/product/category-filter";
 import { ProductGrid } from "@/components/product/product-grid";
-import type { Product, Category } from "@/payload-types";
+import type { Product, Category } from "@/types/payload";
+import { useTranslations } from "next-intl";
 
 interface ProductsClientProps {
   products: Product[];
   featuredProducts: Product[];
   categories: Category[];
-  translations: {
-    title: string;
-    allCategories: string;
-    featured: string;
-    bestSeller: string;
-    viewDetails: string;
-    noProducts: string;
-    featuredSection: string;
-  };
 }
 
 export function ProductsClient({
   products,
   featuredProducts,
   categories,
-  translations,
 }: ProductsClientProps) {
+  const t = useTranslations();
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
@@ -56,13 +49,9 @@ export function ProductsClient({
       {featuredProducts.length > 0 && (
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 text-center">
-            {translations.featuredSection}
+            {t("Pages.Products.featured")}
           </h2>
-          <ProductGrid
-            products={featuredProducts}
-            translations={translations}
-            selectedCategory={null}
-          />
+          <ProductGrid products={featuredProducts} selectedCategory={null} />
         </section>
       )}
 
@@ -72,16 +61,11 @@ export function ProductsClient({
           categories={categories}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
-          translations={translations}
         />
       </div>
 
       {/* All Products Grid */}
-      <ProductGrid
-        products={products}
-        translations={translations}
-        selectedCategory={selectedCategory}
-      />
+      <ProductGrid products={products} selectedCategory={selectedCategory} />
     </div>
   );
 }
