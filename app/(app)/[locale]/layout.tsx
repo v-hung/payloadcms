@@ -4,7 +4,6 @@ import { Header } from "@/components/navigation/header";
 import { Footer } from "@/components/navigation/footer";
 import "./globals.css";
 import { getCompanyInfo } from "@/services";
-import { LocaleType } from "@/lib/utils/locale";
 
 const inter = Inter({
   subsets: ["vietnamese"],
@@ -23,7 +22,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
   params: Promise<{
-    locale: LocaleType;
+    locale: string;
   }>;
 }>) {
   const { locale } = await params;

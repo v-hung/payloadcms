@@ -3,16 +3,9 @@ import { getCompanyInfo } from "@/services";
 import { ContactForm } from "@/components/forms/contact-form";
 import type { Metadata } from "next";
 
-type LocaleType = "en" | "vi";
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
+export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Pages.Contact");
-  const companyInfo = await getCompanyInfo(locale as LocaleType);
+  const companyInfo = await getCompanyInfo();
 
   return {
     title: `${t("title")} - ${companyInfo.companyName || "Company"}`,
@@ -20,13 +13,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function ContactPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const companyInfo = await getCompanyInfo(locale as LocaleType);
+export default async function ContactPage() {
+  const companyInfo = await getCompanyInfo();
   const t = await getTranslations("Pages.Contact");
 
   return (

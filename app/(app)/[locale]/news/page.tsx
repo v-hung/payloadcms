@@ -3,12 +3,6 @@ import { getPosts } from "@/services";
 import { PostCard } from "@/components/content/post-card";
 import type { Metadata } from "next";
 
-type LocaleType = "en" | "vi";
-
-type Params = Promise<{
-  locale: string;
-}>;
-
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Pages.News");
 
@@ -18,11 +12,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function NewsPage({ params }: { params: Params }) {
-  const { locale } = await params;
-
+export default async function NewsPage() {
   const postsData = await getPosts({
-    locale: locale as LocaleType,
     limit: 12,
   });
 

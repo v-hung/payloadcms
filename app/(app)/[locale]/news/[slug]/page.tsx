@@ -1,16 +1,13 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { getPostBySlug } from "@/services";
 import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 import { format } from "date-fns";
 import type { Metadata } from "next";
 
-type LocaleType = "en" | "vi";
-
 type Params = Promise<{
-  locale: string;
   slug: string;
 }>;
 
@@ -19,8 +16,8 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const { locale, slug } = await params;
-  const post = await getPostBySlug(slug, locale as LocaleType);
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -35,16 +32,15 @@ export async function generateMetadata({
 }
 
 export default async function NewsDetailPage({ params }: { params: Params }) {
-  const { locale, slug } = await params;
-  setRequestLocale(locale);
+  const { slug } = await params;
 
-  const post = await getPostBySlug(slug, locale as LocaleType);
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
   }
 
-  const t = await getTranslations({ locale, namespace: "NewsPage" });
+  const t = await getTranslations();
 
   const featuredImage =
     post.featuredImage &&
@@ -67,7 +63,7 @@ export default async function NewsDetailPage({ params }: { params: Params }) {
         </Link>
         {" > "}
         <Link href="/news" className="hover:text-foreground">
-          {t("title")}
+          {t("Pages.News.title")}
         </Link>
         {" > "}
         <span className="text-foreground">{post.title}</span>
@@ -93,7 +89,7 @@ export default async function NewsDetailPage({ params }: { params: Params }) {
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
           {publishDate && (
             <p className="text-muted-foreground">
-              {t("publishedOn")} {publishDate}
+              {t("Common.publishedOn")} {publishDate}
             </p>
           )}
         </header>
@@ -115,7 +111,7 @@ export default async function NewsDetailPage({ params }: { params: Params }) {
           href="/news"
           className="inline-flex items-center text-primary hover:underline"
         >
-          ← Back to {t("title")}
+          ← Back to {t("Pages.News.title")}
         </Link>
       </div>
     </div>

@@ -7,15 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import type { Metadata } from "next";
 import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 
-type LocaleType = "en" | "vi";
-
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { locale, slug } = await params;
-  const product = await getProductBySlug(slug, locale as LocaleType);
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     return {
@@ -32,11 +30,11 @@ export async function generateMetadata({
 export default async function ProductDetailPage({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { locale, slug } = await params;
-  const product = await getProductBySlug(slug, locale as LocaleType);
-  const t = await getTranslations({ locale, namespace: "ProductDetail" });
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+  const t = await getTranslations("Pages.ProductDetail");
 
   if (!product) {
     notFound();

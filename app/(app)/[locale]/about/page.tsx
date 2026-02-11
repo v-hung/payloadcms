@@ -3,15 +3,8 @@ import { getCompanyInfo } from "@/services";
 import type { Metadata } from "next";
 import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 
-type LocaleType = "en" | "vi";
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const companyInfo = await getCompanyInfo(locale as LocaleType);
+export async function generateMetadata(): Promise<Metadata> {
+  const companyInfo = await getCompanyInfo();
   const t = await getTranslations("Pages.About");
 
   return {
@@ -20,13 +13,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function AboutPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const companyInfo = await getCompanyInfo(locale as LocaleType);
+export default async function AboutPage() {
+  const companyInfo = await getCompanyInfo();
   const t = await getTranslations("Pages.About");
 
   return (

@@ -3,49 +3,27 @@ import { getProducts, getCategories } from "@/services";
 import { ProductsClient } from "@/components/product/products-client";
 import type { Metadata } from "next";
 
-type LocaleType = "en" | "vi";
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "ProductsPage" });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations();
 
   return {
-    title: t("title"),
-    description: t("title"),
+    title: t("Pages.Products.title"),
+    description: t("Pages.Products.title"),
   };
 }
 
-export default async function ProductsPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "ProductsPage" });
+export default async function ProductsPage() {
+  const t = await getTranslations("Pages.Products");
 
   // Fetch all products and categories
   const [productsData, categories] = await Promise.all([
-    getProducts({ locale: locale as LocaleType, limit: 100 }),
-    getCategories(locale as LocaleType),
+    getProducts({ limit: 100 }),
+    getCategories(),
   ]);
 
   // Separate featured products
   const featuredProducts = productsData.products.filter((p) => p.featured);
   const allProducts = productsData.products;
-
-  const translations = {
-    title: t("title"),
-    allCategories: t("allCategories"),
-    featured: t("featured"),
-    bestSeller: t("bestSeller"),
-    viewDetails: t("viewDetails"),
-    noProducts: t("noProducts"),
-    featuredSection: t("featured"),
-  };
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -58,7 +36,6 @@ export default async function ProductsPage({
         products={allProducts}
         featuredProducts={featuredProducts}
         categories={categories}
-        translations={translations}
       />
     </div>
   );
